@@ -1,4 +1,4 @@
 export default function formatDate(date) {
-  if (!date) return '';
+  if (!date) return "";
   return new Date(date).toLocaleString();
 }
