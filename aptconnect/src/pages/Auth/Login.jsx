@@ -2,7 +2,7 @@ import { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../lib/firebase";
 import { useNavigate } from "react-router-dom";
-import MagicBento from "../../components/ui/MagicBento";
+// import MagicBento from "../../components/ui/MagicBento";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -22,7 +22,7 @@ const Login = () => {
   return (
     <div className="relative min-h-screen flex flex-row  bg-gray-50 overflow-hidden">
   
-<div className="flex-1/2">
+{/* <div className="flex-1/2">
 <MagicBento 
   textAutoHide={true}
   enableStars={true}
@@ -35,7 +35,7 @@ const Login = () => {
   particleCount={12}
   glowColor="132, 0, 255"
 />
-</div>
+</div> */}
 <div className="flex-1/2 flex flex-col items-center justify-center">
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
       <form onSubmit={handleSubmit} className="bg-white p-6 rounded-xl shadow w-80 space-y-4">
