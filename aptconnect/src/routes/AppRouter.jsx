@@ -16,7 +16,7 @@ import NotFound from "../pages/NotFound";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import DashboardLayout from "../components/layout/DashboardLayout";
-
+import PrivateRoute from "./PrivateRoute";
 const AppRouter = () => {
   return (
     <Router>
@@ -51,60 +51,75 @@ const AppRouter = () => {
         />
 
         {/* Dashboard Routes (Sidebar + Workspace) */}
-        <Route
-          path="/home"
-          element={
-            <DashboardLayout>
-              <Home />
-            </DashboardLayout>
-          }
-        />
+       <Route
+  path="/home"
+  element={
+    <PrivateRoute>
+      <DashboardLayout>
+        <Home />
+      </DashboardLayout>
+    </PrivateRoute>
+  }
+/>
+
         <Route
           path="/explore"
           element={
-            <DashboardLayout>
-              <Explore />
-            </DashboardLayout>
+            <PrivateRoute>
+              <DashboardLayout>
+                <Explore />
+              </DashboardLayout>
+            </PrivateRoute>
           }
         />
         <Route
           path="/chat"
           element={
-            <DashboardLayout>
-              <Chat />
-            </DashboardLayout>
+            <PrivateRoute>
+              <DashboardLayout>
+                <Chat />
+              </DashboardLayout>
+            </PrivateRoute>
           }
         />
         <Route
           path="/showcase"
           element={
-            <DashboardLayout>
-              <Showcase />
-            </DashboardLayout>
+            <PrivateRoute>
+              <DashboardLayout>
+                <Showcase />
+              </DashboardLayout>
+            </PrivateRoute>
           }
         />
         <Route
           path="/notifications"
           element={
-            <DashboardLayout>
-              <Notifications />
-            </DashboardLayout>
+            <PrivateRoute>
+              <DashboardLayout>
+                <Notifications />
+              </DashboardLayout>
+            </PrivateRoute>
           }
         />
         <Route
           path="/profile"
           element={
-            <DashboardLayout>
-              <Profile />
-            </DashboardLayout>
+            <PrivateRoute>
+              <DashboardLayout>
+                <Profile />
+              </DashboardLayout>
+            </PrivateRoute>
           }
         />
         <Route
           path="/settings"
           element={
-            <DashboardLayout>
-              <Settings />
-            </DashboardLayout>
+            <PrivateRoute>
+              <DashboardLayout>
+                <Settings />
+              </DashboardLayout>
+            </PrivateRoute>
           }
         />
 

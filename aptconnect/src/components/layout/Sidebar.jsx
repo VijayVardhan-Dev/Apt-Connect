@@ -1,9 +1,11 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+
 
 const Sidebar = () => {
   //const { pathname } = useLocation();
-
+  const { logout } = useAuth();
   const navItems = [
     { name: "Home", path: "/home" },
     { name: "Explore", path: "/explore" },
@@ -29,6 +31,9 @@ const Sidebar = () => {
           </Link>
         ))}
       </nav>
+      <button onClick={logout} className="p-2 text-sm text-gray-600 hover:text-red-600">
+  Logout
+       </button>
     </aside>
   );
 };
