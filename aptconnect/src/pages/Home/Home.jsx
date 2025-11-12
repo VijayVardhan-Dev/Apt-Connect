@@ -1,5 +1,5 @@
 import React from "react";
-import Post from "../../components/shared/post.jsx";
+import Post from "../../components/shared/Post.jsx";
 import clubDp from "../../assets/images/club_dp.png";
 import postImg from "../../assets/images/post.png";
 import viewsIcon from "../../assets/icons/views_icon.png";
