@@ -88,7 +88,7 @@ const post = ({ post, onLike, onSave, onComment }) => {
                       <div className="text-xs">{comments}</div>
                     </div>
 
-                    <div className="ml-auto flex items-center gap-2">
+                    <div className="flex items-center gap-2">
                       <img src={saveIcon} onClick={onSave} alt="save" className="w-4 h-4 object-contain" />
                       <div className="text-xs">Save</div>
                     </div>
