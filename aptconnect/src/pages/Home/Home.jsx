@@ -67,41 +67,12 @@ const posts = [
 ];
 
 export default function Home() {
-  const avatars = [clubDp, clubDp, clubDp, clubDp, clubDp, clubDp, clubDp, clubDp, clubDp];
+  const avatars = [postImg,postImg,postImg,postImg,postImg,postImg,postImg,postImg];
 
   return (
     <div className="min-h-screen  bg-white text-slate-900">
       {/* ===== Header: centered search, profile on right ===== */}
-      <header className="w-full border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-6 py-3 relative">
-          {/* Centered search */}
-          <div className="flex justify-center">
-            <div className="relative w-full max-w-md">
-              <img
-                src={searchIcon}
-                alt="search icon"
-                className="absolute left-3 top-2.5 w-4 h-4 opacity-40"
-              />
-              <input
-                type="search"
-                placeholder="search clubs"
-                className="w-full h-10 pl-10 pr-3 rounded-md bg-[#f7f7f7] border border-gray-200 text-sm placeholder:text-gray-400 focus:outline-none"
-                aria-label="search clubs"
-              />
-            </div>
-          </div>
-
-          {/* Profile icon on the right */}
-          <div className="absolute right-6 top-1/2 transform -translate-y-1/2">
-            <img
-              src={profileIcon}
-              alt="profile"
-              className="w-6 h-6 object-contain cursor-pointer"
-            />
-          </div>
-        </div>
-      </header>
-
+     
       {/* ===== Centered content column ===== */}
       <main className="max-w-3xl mx-auto px-4 py-6 space-y-8">
       
@@ -114,8 +85,8 @@ export default function Home() {
                 key={i}
                 src={src}
                 alt={`avatar-${i}`}
-                className="w-20 h-20 rounded-full object-cover shadow-sm"
-                style={{ width: 72, height: 72 }}
+                className="w-25 h-25 rounded-full object-cover border-3 border-bordercolor p-1"
+                style={{ width: 82, height: 82 }}
               />
             ))}
           </div>
