@@ -1,6 +1,7 @@
 // src/pages/Auth/Login.jsx
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
+import ClubImageScroll from "../../components/ui/ClubImageScroll"; // <- adjust path if needed
 import arrowIcon from "../../assets/icons/arrow_icon.png";
 
 export default function Login() {
@@ -12,119 +13,124 @@ export default function Login() {
     navigate("/");
   };
 
+    const handleClick = () => {
+   
+    // UI-only: navigate to dashboard (replace with real sign-in later)
+    navigate("/");
+  };
+
   const handleGoogle = () => {
     // Placeholder for Google sign-in UI flow
     alert("UI-only: Google sign-in placeholder");
   };
 
   return (
-    <div className="w-full min-h-screen relative bg-white overflow-hidden">
-      {/* Right panel (form area) */}
-      <div className="absolute right-0 top-0 w-[660px] h-full outline outline-1 outline-offset-[-1px] outline-gray-200">
-        {/* Email input (visual) */}
-        <div className="absolute left-[140px] top-[386px] w-96 h-12 rounded-lg outline outline-1 outline-offset-[-1px] outline-neutral-800 flex items-center px-3">
-          <input
-            aria-label="email"
-            placeholder="Alice"
-            className="w-full bg-transparent text-sm text-slate-800 focus:outline-none"
-          />
+    <div className="min-h-screen  bg-gray-50 flex items-center justify-center">
+      {/* Card container: responsive split */}
+      <div className="w-full   shadow-lg overflow-hidden bg-white flex flex-col md:flex-row h-[min(100vh,900px)]">
+
+        {/* LeftPart */}
+
+        {/* Left visual: three-column infinite scroll
+            - md:w-1/2 gives half the width on desktop and up
+            - h-full ensures it fills the card height (min-height screen handled by parent) */}
+        <div className="hidden md:block md:w-1/2 h-full bg-white">
+          <ClubImageScroll/>
         </div>
 
-        {/* Password input (visual) */}
-        <div className="absolute left-[140px] top-[472px] w-96 h-12 rounded-lg outline outline-1 outline-offset-[-1px] outline-neutral-800 flex items-center px-3">
-          <input
-            aria-label="password"
-            placeholder="Eshlea"
-            type="password"
-            className="w-full bg-transparent text-sm text-slate-800 focus:outline-none"
-          />
-        </div>
+        {/* Right form panel */}
+        <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center bg-white">
+             
+         
+          {/* Form (semantic) */}
+          <form onSubmit={handleLogin} className="max-w-[550px] w-full mx-auto space-y-4">
 
-        {/* --- Sign Up (white pill) --> Link to /register */}
-        <Link
-          to="/Register"
-          className="absolute left-[144px] top-[638px] w-96 h-11 flex items-center justify-center bg-white rounded-full outline outline-1 outline-offset-[-1px] outline-slate-300 hover:bg-slate-50 active:scale-95 transition"
-          aria-label="Sign Up"
-        >
-          <span className="text-slate-800 text-sm font-bold leading-5">Sign Up</span>
-        </Link>
+          <div className="mb-6 flex items-center gap-4">
+            <button
+              type="button"
+              aria-label="Back"
+              // onClick={() => window.history.back()}
+              onClick={handleClick}
+              className="p-1 rounded-md hover:bg-gray-100 transition"
+            >
+              <img src={arrowIcon} alt="back" className="w-6 h-6" />
+            </button>
+            <h1 className="text-2xl font-semibold text-slate-900">Login</h1>
+          </div>
 
-        {/* Login (dark pill) */}
-        <button
-          onClick={handleLogin}
-          className="absolute left-[144px] top-[552px] w-96 h-11 flex items-center justify-center bg-slate-800 rounded-full outline outline-1 outline-offset-[-1px] outline-slate-300 hover:bg-slate-700 active:scale-95 transition"
-          aria-label="Login"
-        >
-          <span className="text-white text-sm font-bold leading-5">Login</span>
-        </button>
+          <p className="text-sm text-zinc-600 mb-6">
+            Welcome back — enter your credentials to continue.
+          </p>
 
-        {/* Login with Google */}
-        <button
-          onClick={handleGoogle}
-          className="absolute left-[144px] top-[692px] w-96 h-11 flex items-center justify-center bg-slate-800 rounded-full outline outline-1 outline-offset-[-1px] outline-slate-300 hover:bg-slate-700 active:scale-95 transition"
-          aria-label="Login with Google"
-        >
-          <span className="text-white text-sm font-bold leading-5">Login in with Google</span>
-        </button>
+            <div>
+              <label htmlFor="email" className="block text-sm text-zinc-600 mb-1">
+                Email
+              </label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                required
+                placeholder="name@example.com"
+                className="w-full h-12 px-3 rounded-lg border border-neutral-200 focus:border-slate-800 focus:ring-0 text-sm bg-transparent"
+                aria-label="email"
+              />
+            </div>
 
-        {/* "Or" separator */}
-        <div className="absolute left-[170px] top-[612px] w-80 h-4">
-          <div className="absolute left-0 top-[7.5px] w-36 h-px border-t border-neutral-800" />
-          <div className="absolute left-[178.67px] top-[7.5px] w-36 h-px border-t border-neutral-800" />
-          <div className="absolute left-[153.33px] top-0 text-neutral-800 text-xs">Or</div>
-        </div>
+            <div>
+              <div className="flex items-center justify-between">
+                <label htmlFor="password" className="block text-sm text-zinc-600 mb-1">
+                  Password
+                </label>
+                <button type="button" className="text-sm text-slate-800 underline">
+                  Forgot?
+                </button>
+              </div>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                required
+                placeholder="••••••••"
+                className="w-full h-12 px-3 rounded-lg border border-neutral-200 focus:border-slate-800 focus:ring-0 text-sm bg-transparent"
+                aria-label="password"
+              />
+            </div>
 
-        {/* Labels and text */}
-        <div className="absolute left-[136px] top-[288px] text-slate-900 text-4xl font-normal leading-8">Login</div>
-        <div className="absolute left-[140px] top-[358px] text-zinc-600 text-base leading-4">Email</div>
-        <div className="absolute left-[140px] top-[449px] text-zinc-600 text-base leading-4">Password</div>
-        <div className="absolute left-[446px] top-[449px] text-slate-800 text-base leading-4"><button className="underline">Forgot ?</button></div>
+            <div className="pt-2">
+              <button
+                type="submit"
+                aria-label="Login"
+                className="w-full h-11 flex items-center justify-center bg-slate-800 text-white rounded-full font-semibold hover:bg-slate-700 active:scale-95 transition"
+              >
+                Login
+              </button>
+            </div>
 
-        {/* Arrow icon (top-left of right panel) */}
-        <img
-          src={arrowIcon}
-          alt="back"
-          className="w-7 h-7 absolute left-[52px] top-[19px] object-contain"
-        />
-      </div>
+            <div className="flex items-center justify-center gap-3 mt-2">
+              <div className="flex-1 h-px bg-neutral-200" />
+              <div className="text-xs text-neutral-600">Or</div>
+              <div className="flex-1 h-px bg-neutral-200" />
+            </div>
 
-      {/* Left visual tile area */}
-      <div className="absolute left-0 top-0 w-[780px] h-full bg-white rounded-2xl border border-gray-200 overflow-hidden">
-        {/* The grid of decorative tiles (placeholders) */}
-        <div className="absolute left-0 top-0 w-64 h-56 overflow-hidden">
-          <div className="w-64 h-56 bg-neutral-200" />
-        </div>
+            <div>
+              <button
+                type="button"
+                onClick={handleGoogle}
+                aria-label="Login with Google"
+                className="w-full h-11 flex items-center justify-center bg-white border border-neutral-200 text-sm font-semibold rounded-full hover:bg-neutral-50 active:scale-95 transition"
+              >
+                Login with Google
+              </button>
+            </div>
 
-        <div className="absolute left-[281.33px] top-0 w-56 h-56 bg-neutral-200 rounded-2xl" />
-
-        <div className="absolute left-[531px] top-0 w-64 h-96 overflow-hidden">
-          <div className="w-64 h-96 bg-neutral-200" />
-        </div>
-
-        <div className="absolute left-0 top-[242px] w-56 h-80 overflow-hidden">
-          <div className="w-56 h-80 bg-neutral-200" />
-        </div>
-
-        <div className="absolute left-[252px] top-[242px] w-60 h-[500px] overflow-hidden">
-          <div className="w-60 h-[500px] bg-neutral-200" />
-        </div>
-
-        <div className="absolute left-0 top-[588px] w-56 h-60 bg-neutral-200 rounded-2xl" />
-
-        <div className="absolute left-[531px] top-[470px] w-64 h-64 rounded-tl-3xl rounded-bl-3xl overflow-hidden">
-          <div className="w-64 h-64 bg-neutral-200" />
-        </div>
-
-        <div className="absolute left-0 top-[853px] w-56 h-64 overflow-hidden">
-          <div className="w-56 h-64 bg-neutral-200" />
-        </div>
-
-        <div className="absolute left-[252px] top-[770px] w-60 h-64 overflow-hidden">
-          <div className="w-60 h-64 bg-neutral-200" />
-        </div>
-
-        <div className="absolute left-[531px] top-[770px] w-64 h-64 overflow-hidden">
-          <div className="w-64 h-64 bg-neutral-200" />
+            <div className="text-center text-sm text-zinc-600">
+              Don't have an account?{" "}
+              <Link to="/Register" className="text-slate-800 font-semibold underline">
+                Sign Up
+              </Link>
+            </div>
+          </form>
         </div>
       </div>
     </div>
