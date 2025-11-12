@@ -80,5 +80,3 @@ function ProjectCard({ project }) {
     </article>
   );
 }
-
-export default Showcase
