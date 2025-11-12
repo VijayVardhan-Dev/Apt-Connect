@@ -38,3 +38,12 @@
 
   --shadow-card: 0 2px 6px 2px rgb(60 64 67 / 0.15);
 }
+/* hide native scrollbar (Chrome/Safari/Edge/Opera + Firefox + IE) */
+/* Hide scrollbar but keep scroll functionality */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;     /* Firefox */
+}
