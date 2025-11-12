@@ -13,7 +13,6 @@ const Sidebar = ({ onClose }) => {
     { label: "Explore clubs", href: "#" },
     { label: "Showcase wall", href: "#" },
     { label: "My chats", href: "#" },
-    { label: "Notifications", href: "#" },
   ];
 
   const myClubLinks = [
@@ -21,6 +20,16 @@ const Sidebar = ({ onClose }) => {
     { label: "Dance club", href: "#" },
     { label: "Apt gang", href: "#" },
     { label: "Literature", href: "#" },
+    { label: "Music lovers", href: "#" },
+    { label: "Photography", href: "#" },
+    { label: "Travel enthusiasts", href: "#" },
+    { label: "Foodies", href: "#" },
+    { label: "Fitness freaks", href: "#" },
+    { label: "Movie buffs", href: "#" },
+    { label: "Gaming zone", href: "#" },
+    { label: "Art & Craft", href: "#" },
+    { label: "Tech talks", href: "#" },
+    // add more to test scrolling
   ];
 
   const utilityLinks = [
@@ -30,13 +39,14 @@ const Sidebar = ({ onClose }) => {
 
   return (
     <aside
-      className="w-80 h-full bg-white flex flex-col shadow-2xl overflow-y-auto"
+      className="fixed top-0 left-0 w-80 h-screen bg-white flex flex-col shadow-2xl z-50"
       onClick={(e) => e.stopPropagation()} // prevent overlay close when clicking inside
     >
       {/* Header */}
       <div className="flex justify-between items-center h-16 px-4 border-b border-slate-300">
         <div className="flex items-left">
-          <img className="rounded-lg h-13 w-40" src={logoIcon} alt="App Logo" />
+          {/* use sensible Tailwind sizing for logo */}
+          <img className="rounded-lg h-10 w-40 object-contain" src={logoIcon} alt="App Logo" />
         </div>
 
         <button
@@ -48,8 +58,8 @@ const Sidebar = ({ onClose }) => {
         </button>
       </div>
 
-      {/* Navigation */}
-      <nav className="grow py-6 pl-8">
+      {/* NAV: scrollable area only */}
+      <nav className="flex-1 overflow-y-auto py-6 pl-8 scrollbar-hide">
         <div className="mb-8">
           <h3 className="mb-3 text-base font-medium text-slate-600">Explore</h3>
           {exploreLinks.map((link) => (
@@ -77,14 +87,15 @@ const Sidebar = ({ onClose }) => {
         </div>
       </nav>
 
-      {/* Footer */}
-      <div className="py-6 border-t border-slate-300 flex flex-col justify-between flex-1">
-        <div>
+      {/* FOOTER: non-scrolling (pinned). Use flex-none so nav scrolls independently */}
+      <div className="flex-none border-t border-slate-300 bg-white">
+        {/* utility links */}
+        <div className="px-8 py-3">
           {utilityLinks.map((item) => (
             <a
               key={item.label}
               href={item.href}
-              className="flex items-center py-2 pl-20 text-base text-slate-600 hover:bg-indigo-50 hover:text-indigo-700 transition-colors"
+              className="flex items-center py-2 text-base text-slate-600 hover:bg-indigo-50 hover:text-indigo-700 transition-colors"
             >
               <img
                 src={item.iconSrc}
@@ -100,9 +111,9 @@ const Sidebar = ({ onClose }) => {
           ))}
         </div>
 
-        {/* Bottom row: two separate icon buttons */}
+        {/* bottom icons row — sticky so it's always visible within footer */}
         <div className="sticky bottom-0 bg-white py-3">
-          <div className="flex justify-between items-center px-10">
+          <div className="px-8 flex items-center gap-x-6">
             <button
               className="p-2 rounded-full hover:bg-indigo-50 transition-colors"
               title="Profile"
