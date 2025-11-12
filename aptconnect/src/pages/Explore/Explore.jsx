@@ -1,12 +1,10 @@
-import React from 'react'
+import React from "react";
 
-const Explore = () => {
+export default function Explore() {
   return (
-      <div>
+    <div>
       <h1>Explore</h1>
       <p>Placeholder Explore page</p>
     </div>
-  )
+  );
 }
-
-export default Explore
