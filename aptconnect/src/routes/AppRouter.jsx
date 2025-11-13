@@ -11,7 +11,7 @@ import Showcase from "../pages/Showcase/Showcase";
 import Chat from "../pages/Chat/Chat";
 import Profile from "../pages/Profile/Profile";
 import Settings from "../pages/Settings/Settings";
-import MembersList from "../pages/Chat/members";
+import MembersList from "../pages/Chat/Members";
 import NotFound from "../pages/NotFound";
 
 import Navbar from "../components/layout/Navbar";
