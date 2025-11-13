@@ -1,7 +1,8 @@
 // src/pages/Showcase/Showcase.jsx
 import React from "react";
+import { useNavigate } from "react-router-dom"; // 👈 import navigate
 
-const projects = Array.from({ length: 12}).map((_, i) => ({
+const projects = Array.from({ length: 12 }).map((_, i) => ({
   id: i + 1,
   title: "AI Sorting Robot",
   author: "Robotics Club",
@@ -10,6 +11,8 @@ const projects = Array.from({ length: 12}).map((_, i) => ({
 }));
 
 export default function Showcase() {
+  const navigate = useNavigate(); // 👈 initialize navigate
+
   const topThree = projects.slice(0, 3);
   const fewMore = projects.slice(3);
 
@@ -17,19 +20,19 @@ export default function Showcase() {
     <section className="max-w-7xl mx-auto">
       {/* Header */}
       <div className="h-16 flex items-center border-b border-slate-300">
+        {/* Arrow icon now acts as a back button */}
         <img
           src="src/assets/icons/arrow_icon.png"
-          alt="icon"
-          className="w-10 h-6 pl-4 mr-4 rounded"
+          alt="Back to home"
+          className="w-10 h-6 pl-4 mr-4 rounded cursor-pointer hover:opacity-80 transition"
+          onClick={() => navigate("/")} // 👈 navigates to home
         />
         <h2 className="text-xl font-normal">Showcase wall</h2>
       </div>
 
       {/* Top three clubs */}
-      <div className="mt-8 pl-15">
-        <h3 className="text-lg font-semibold mb-6 px-2  sm:px-0">
-          Top three clubs
-        </h3>
+      <div className="mt-8 pl-6">
+        <h3 className="text-lg font-semibold mb-6">Top three clubs</h3>
         <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 justify-items-center">
           {topThree.map((p) => (
             <ProjectCard key={p.id} project={p} />
@@ -38,10 +41,8 @@ export default function Showcase() {
       </div>
 
       {/* Few more clubs */}
-      <div className="mt-12 mb-16 pl-15">
-        <h3 className="text-lg font-semibold mb-6 px-2 sm:px-0">
-          Few more clubs
-        </h3>
+      <div className="mt-12 mb-16 pl-6">
+        <h3 className="text-lg font-semibold mb-6">Few more clubs</h3>
         <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 justify-items-center">
           {fewMore.map((p) => (
             <ProjectCard key={p.id} project={p} />
