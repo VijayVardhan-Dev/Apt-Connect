@@ -1,69 +1,72 @@
-// src/pages/Auth/Login.jsx
-import React from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import ClubImageScroll from "../../components/ui/ClubImageScroll"; // <- adjust path if needed
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../lib/firebase";
+import ClubImageScroll from "../../components/ui/ClubImageScroll"; 
 import arrowIcon from "../../assets/icons/arrow_icon.png";
 
 export default function Login() {
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  // Firebase authentication state
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  // Handle login form submit
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // UI-only: navigate to dashboard (replace with real sign-in later)
-    navigate("/");
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      navigate("/home"); // redirect after successful login
+    } catch (err) {
+      setError("Invalid email or password");
+    }
   };
 
-    const handleClick = () => {
-   
-    // UI-only: navigate to dashboard (replace with real sign-in later)
+  const handleClick = () => {
     navigate("/");
   };
 
   const handleGoogle = () => {
-    // Placeholder for Google sign-in UI flow
     alert("UI-only: Google sign-in placeholder");
   };
 
   return (
-    <div className="min-h-screen  bg-gray-50 flex items-center justify-center">
-      {/* Card container: responsive split */}
-      <div className="w-full   shadow-lg overflow-hidden bg-white flex flex-col md:flex-row h-[min(100vh,900px)]">
-
-        {/* LeftPart */}
-
-        {/* Left visual: three-column infinite scroll
-            - md:w-1/2 gives half the width on desktop and up
-            - h-full ensures it fills the card height (min-height screen handled by parent) */}
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="w-full shadow-lg overflow-hidden bg-white flex flex-col md:flex-row h-[min(100vh,900px)]">
+        {/* Left Part */}
         <div className="hidden md:block md:w-1/2 h-full bg-white">
-          <ClubImageScroll/>
+          <ClubImageScroll />
         </div>
 
-        {/* Right form panel */}
+        {/* Right Form Panel */}
         <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center bg-white">
-             
-         
-          {/* Form (semantic) */}
-          <form onSubmit={handleLogin} className="max-w-[550px] w-full mx-auto space-y-4">
+          <form
+            onSubmit={handleLogin}
+            className="max-w-[550px] w-full mx-auto space-y-4"
+          >
+            <div className="mb-6 flex items-center gap-4">
+              <button
+                type="button"
+                aria-label="Back"
+                onClick={handleClick}
+                className="p-1 rounded-md hover:bg-gray-100 transition"
+              >
+                <img src={arrowIcon} alt="back" className="w-6 h-6" />
+              </button>
+              <h1 className="text-2xl font-semibold text-slate-900">Login</h1>
+            </div>
 
-          <div className="mb-6 flex items-center gap-4">
-            <button
-              type="button"
-              aria-label="Back"
-              // onClick={() => window.history.back()}
-              onClick={handleClick}
-              className="p-1 rounded-md hover:bg-gray-100 transition"
-            >
-              <img src={arrowIcon} alt="back" className="w-6 h-6" />
-            </button>
-            <h1 className="text-2xl font-semibold text-slate-900">Login</h1>
-          </div>
-
-          <p className="text-sm text-zinc-600 mb-6">
-            Welcome back — enter your credentials to continue.
-          </p>
+            <p className="text-sm text-zinc-600 mb-6">
+              Welcome back — enter your credentials to continue.
+            </p>
 
             <div>
-              <label htmlFor="email" className="block text-sm text-zinc-600 mb-1">
+              <label
+                htmlFor="email"
+                className="block text-sm text-zinc-600 mb-1"
+              >
                 Email
               </label>
               <input
@@ -72,6 +75,8 @@ export default function Login() {
                 type="email"
                 required
                 placeholder="name@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="w-full h-12 px-3 rounded-lg border border-neutral-200 focus:border-slate-800 focus:ring-0 text-sm bg-transparent"
                 aria-label="email"
               />
@@ -79,10 +84,16 @@ export default function Login() {
 
             <div>
               <div className="flex items-center justify-between">
-                <label htmlFor="password" className="block text-sm text-zinc-600 mb-1">
+                <label
+                  htmlFor="password"
+                  className="block text-sm text-zinc-600 mb-1"
+                >
                   Password
                 </label>
-                <button type="button" className="text-sm text-slate-800 underline">
+                <button
+                  type="button"
+                  className="text-sm text-slate-800 underline"
+                >
                   Forgot?
                 </button>
               </div>
@@ -92,10 +103,17 @@ export default function Login() {
                 type="password"
                 required
                 placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 className="w-full h-12 px-3 rounded-lg border border-neutral-200 focus:border-slate-800 focus:ring-0 text-sm bg-transparent"
                 aria-label="password"
               />
             </div>
+
+            {/* Error message */}
+            {error && (
+              <p className="text-sm text-red-600 mt-1">{error}</p>
+            )}
 
             <div className="pt-2">
               <button
@@ -126,7 +144,10 @@ export default function Login() {
 
             <div className="text-center text-sm text-zinc-600">
               Don't have an account?{" "}
-              <Link to="/Register" className="text-slate-800 font-semibold underline">
+              <Link
+                to="/Register"
+                className="text-slate-800 font-semibold underline"
+              >
                 Sign Up
               </Link>
             </div>

@@ -1,16 +1,55 @@
-// src/pages/Auth/Register.jsx
-import React from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
+import { auth, db } from "../../lib/firebase";
 import ClubImageScroll from "../../components/ui/ClubImageScroll"; // Same component as Login
 import arrowIcon from "../../assets/icons/arrow_icon.png";
 
 export default function Register() {
   const navigate = useNavigate();
 
-  const handleSignUp = (e) => {
+  // Form + error state
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const [error, setError] = useState("");
+
+  // Handle input changes
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  // Handle registration
+  const handleSignUp = async (e) => {
     e.preventDefault();
-    // UI-only: navigate to home (replace with real logic later)
-    navigate("/");
+    setError("");
+
+    if (form.password !== form.confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
+    try {
+      const userCred = await createUserWithEmailAndPassword(
+        auth,
+        form.email,
+        form.password
+      );
+      await updateProfile(userCred.user, { displayName: form.name });
+      await setDoc(doc(db, "users", userCred.user.uid), {
+        name: form.name,
+        email: form.email,
+        createdAt: new Date(),
+      });
+
+      navigate("/home"); // redirect on success
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   const handleGoogle = () => {
@@ -21,18 +60,17 @@ export default function Register() {
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
       {/* Card container: responsive split (Same as Login) */}
       <div className="w-full shadow-lg overflow-hidden bg-white flex flex-col md:flex-row h-[min(100vh,900px)]">
-        
         {/* Left Visual: ClubImageScroll (Hidden on mobile, 50% on desktop) */}
         <div className="hidden md:block md:w-1/2 h-full bg-white border-r border-gray-100">
           <ClubImageScroll />
         </div>
 
         {/* Right Form Panel */}
-        {/* Added overflow-y-auto to handle smaller screens since Register forms are longer */}
         <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center bg-white overflow-y-auto">
-          
-          <form onSubmit={handleSignUp} className="max-w-[550px] w-full mx-auto space-y-4">
-            
+          <form
+            onSubmit={handleSignUp}
+            className="max-w-[550px] w-full mx-auto space-y-4"
+          >
             {/* Header & Back Button */}
             <div className="mb-6 flex items-center gap-4">
               <button
@@ -46,13 +84,33 @@ export default function Register() {
               <h1 className="text-2xl font-semibold text-slate-900">Sign Up</h1>
             </div>
 
-            <p className="text-sm text-zinc-600 mb-6">
-              Create an account to start your nightlife experience.
-            </p>
+            
+            {/* Name Field */}
+            <div>
+              <label
+                htmlFor="name"
+                className="block text-sm text-zinc-600 mb-1"
+              >
+                Full Name
+              </label>
+              <input
+                id="name"
+                name="name"
+                type="text"
+                required
+                placeholder="John Doe"
+                value={form.name}
+                onChange={handleChange}
+                className="w-full h-12 px-3 rounded-lg border border-neutral-200 focus:border-slate-800 focus:ring-0 text-sm bg-transparent"
+              />
+            </div>
 
             {/* Email Field */}
             <div>
-              <label htmlFor="email" className="block text-sm text-zinc-600 mb-1">
+              <label
+                htmlFor="email"
+                className="block text-sm text-zinc-600 mb-1"
+              >
                 Email
               </label>
               <input
@@ -61,13 +119,18 @@ export default function Register() {
                 type="email"
                 required
                 placeholder="name@example.com"
+                value={form.email}
+                onChange={handleChange}
                 className="w-full h-12 px-3 rounded-lg border border-neutral-200 focus:border-slate-800 focus:ring-0 text-sm bg-transparent"
               />
             </div>
 
             {/* Password Field */}
             <div>
-              <label htmlFor="password" className="block text-sm text-zinc-600 mb-1">
+              <label
+                htmlFor="password"
+                className="block text-sm text-zinc-600 mb-1"
+              >
                 Password
               </label>
               <input
@@ -76,13 +139,18 @@ export default function Register() {
                 type="password"
                 required
                 placeholder="Create a password"
+                value={form.password}
+                onChange={handleChange}
                 className="w-full h-12 px-3 rounded-lg border border-neutral-200 focus:border-slate-800 focus:ring-0 text-sm bg-transparent"
               />
             </div>
 
             {/* Confirm Password Field */}
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm text-zinc-600 mb-1">
+              <label
+                htmlFor="confirmPassword"
+                className="block text-sm text-zinc-600 mb-1"
+              >
                 Confirm Password
               </label>
               <input
@@ -91,9 +159,16 @@ export default function Register() {
                 type="password"
                 required
                 placeholder="Confirm your password"
+                value={form.confirmPassword}
+                onChange={handleChange}
                 className="w-full h-12 px-3 rounded-lg border border-neutral-200 focus:border-slate-800 focus:ring-0 text-sm bg-transparent"
               />
             </div>
+
+            {/* Error message */}
+            {error && (
+              <p className="text-sm text-red-600 mt-1">{error}</p>
+            )}
 
             {/* Submit Button */}
             <div className="pt-2">
@@ -126,11 +201,13 @@ export default function Register() {
             {/* Link to Login */}
             <div className="text-center text-sm text-zinc-600">
               Already have an account?{" "}
-              <Link to="/Login" className="text-slate-800 font-semibold underline">
+              <Link
+                to="/Login"
+                className="text-slate-800 font-semibold underline"
+              >
                 Login
               </Link>
             </div>
-
           </form>
         </div>
       </div>
