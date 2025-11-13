@@ -1,12 +1,7 @@
-import React from 'react'
+import React from "react";
 
 const Notifications = () => {
-  return (
-    <div>
-      <h1>Notifications</h1>
-      <p>Placeholder Notifications page</p>
-    </div>
-  )
-}
+  return <div>Notifications page</div>;
+};
 
-export default Notifications
+export default Notifications;

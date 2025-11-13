@@ -130,5 +130,5 @@ function Section({ title, children, linkText, onLinkClick, className = "" }) {
 
       {children}
     </div>
-  )
+  );
 }

@@ -1,12 +1,10 @@
-import React from 'react'
+import React from "react";
 
-const Settings = () => {
+export default function Settings() {
   return (
     <div>
       <h1>Settings</h1>
       <p>Placeholder Settings page</p>
     </div>
-  )
+  );
 }
-
-export default Settings
