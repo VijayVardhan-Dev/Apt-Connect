@@ -13,7 +13,8 @@ import Profile from "../pages/Profile/Profile";
 import Settings from "../pages/Settings/Settings";
 import MembersList from "../pages/Chat/Members";
 import NotFound from "../pages/NotFound";
-
+import Feedback from "../pages/Feedback/Feedback";
+import Help from "../pages/Help/Help";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import DashboardLayout from "../components/layout/DashboardLayout";
@@ -107,6 +108,22 @@ const AppRouter = () => {
           element={
             <DashboardLayout>
               <Profile />
+            </DashboardLayout>
+          }
+        />
+        <Route
+          path="/feedback"
+          element={
+            <DashboardLayout>
+              <Feedback />
+            </DashboardLayout>
+          }
+        />
+        <Route
+          path="/help"
+          element={
+            <DashboardLayout>
+              <Help />
             </DashboardLayout>
           }
         />
