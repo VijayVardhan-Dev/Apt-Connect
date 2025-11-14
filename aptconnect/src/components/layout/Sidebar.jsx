@@ -1,5 +1,3 @@
-// Sidebar.jsx (Complete Code with Final Icon Swap)
-
 import React, { useState, useEffect, useRef } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { createPortal } from "react-dom";
@@ -9,7 +7,7 @@ const clsx = (...classes) => classes.filter(Boolean).join(' ');
 
 // local assets (make sure these exist in src/assets/... with exact names/casing)
 import logoIcon from "../../assets/logos/logo.png";
-import toggleMenuIcon from "../../assets/icons/menu.png"; // <-- NEW ICON FOR COLLAPSED STATE
+import toggleMenuIcon from "../../assets/icons/menu.png";
 import logo2Icon from "../../assets/icons/logo.png";
 import homeIcon from "../../assets/icons/Home.png";
 import exploreIcon from "../../assets/icons/Explore.png";
@@ -19,7 +17,7 @@ import notifyIcon from "../../assets/icons/Notification.png";
 import clubIcon from "../../assets/icons/members_icon.png";
 import feedbackIcon from "../../assets/icons/feedback_icon.png";
 import helpIcon from "../../assets/icons/help_icon.png";
-import userIcon from "../../assets/icons/profile_icon.png"; // <-- ICON FOR EXPANDED STATE
+import userIcon from "../../assets/icons/profile_icon.png";
 import settingsIcon from "../../assets/icons/settings.png";
 
 /* ---------------- Tooltip Portal ---------------- */
@@ -33,13 +31,12 @@ function TooltipPortal({ data }) {
     top: `${y}px`,
     pointerEvents: "none",
     zIndex: 9999,
-    // Use the dynamic transform property
     transform: placement === "top" ? "translate(-50%, -110%)" : "translate(0, -50%)",
   };
 
-  // Using Tailwind classes for the bubble style
+  // MODIFIED: Tooltip background/text color
   const bubbleClasses = clsx(
-    "bg-gray-800 text-white px-2 py-1.5 text-xs rounded-lg whitespace-nowrap shadow-xl"
+    "bg-slate-200 text-slate-800 px-2 py-1.5 text-xs rounded-lg whitespace-nowrap shadow-xl"
   );
 
   return createPortal(
@@ -54,12 +51,12 @@ function TooltipPortal({ data }) {
 export default function Sidebar({ onClose }) {
   const location = useLocation();
 
-  // responsive triggers
+  // responsive triggers - MODIFIED: Breakpoint set to 850px
   const [collapsed, setCollapsed] = useState(
-    typeof window !== "undefined" ? window.innerWidth <= 1000 : false
+    typeof window !== "undefined" ? window.innerWidth <= 850 : false
   );
   const [bottomBar, setBottomBar] = useState(
-    typeof window !== "undefined" ? window.innerWidth <= 800 : false
+    typeof window !== "undefined" ? window.innerWidth <= 500 : false
   );
 
   // collapsed popup & refs
@@ -73,9 +70,9 @@ export default function Sidebar({ onClose }) {
   useEffect(() => {
     const handleResize = () => {
       const w = window.innerWidth;
-      setCollapsed(w <= 1000);
-      setBottomBar(w <= 700);
-      if (w > 990) setMenuOpen(false);
+      setCollapsed(w <= 850); // MODIFIED
+      setBottomBar(w <= 500);
+      if (w > 850) setMenuOpen(false); // MODIFIED
     };
     handleResize();
     window.addEventListener("resize", handleResize);
@@ -123,15 +120,26 @@ export default function Sidebar({ onClose }) {
     e.target.src = `https://placehold.co/${size}x${size}/cccccc/000000?text=${txt}`;
   };
 
-  // tooltip helpers: evt is mouse event; placement 'right' (sidebar) or 'top' (bottom bar)
+  // MODIFIED: Tooltip logic for positioning (+6 offset) and hiding on active link when collapsed
   const showTooltip = (evt, text, placement = "right") => {
     if (!evt?.currentTarget && !evt?.target) return;
     const el = evt.currentTarget || evt.target;
     const rect = el.getBoundingClientRect();
+    
+    // Check if the current element's 'href' matches the current location path
+    const elementHref = el.getAttribute('href');
+    const isCurrentlyActive = elementHref && (elementHref === location.pathname);
+    
+    // Hide tooltip if sidebar is collapsed AND link is active
+    if (collapsed && isCurrentlyActive) {
+        return hideTooltip();
+    }
+    
     if (placement === "top") {
       setTooltip({ visible: true, x: rect.left + rect.width / 2, y: rect.top, text, placement });
     } else {
-      setTooltip({ visible: true, x: rect.right + 8, y: rect.top + rect.height / 2, text, placement });
+      // Position: x: rect.right + 6 for a tighter fit
+      setTooltip({ visible: true, x: rect.right + 6, y: rect.top + rect.height / 2, text, placement });
     }
   };
   const hideTooltip = () => setTooltip({ visible: false, x: 0, y: 0, text: "", placement: "right" });
@@ -212,7 +220,7 @@ export default function Sidebar({ onClose }) {
         onClick={(e) => e.stopPropagation()}
         aria-expanded={!collapsed}
       >
-        {/* Header */}
+        {/* Header (unchanged) */}
         <div className={clsx(
           "flex items-center h-16 border-b border-slate-300",
           collapsed ? "justify-center px-2" : "justify-between px-4"
@@ -231,7 +239,7 @@ export default function Sidebar({ onClose }) {
           </div>
         </div>
 
-        {/* Nav (main content remains unchanged) */}
+        {/* Nav (main content) */}
         <nav className={clsx(
           "flex-1 overflow-y-auto py-4 scrollbar-hide overflow-visible",
           collapsed ? "px-0" : "px-2"
@@ -244,7 +252,8 @@ export default function Sidebar({ onClose }) {
               Explore
             </h3>
 
-            <div className="space-y-0">
+            {/* MODIFIED: space-y-2 for vertical gap when collapsed */}
+            <div className={clsx("space-y-0", collapsed ? "space-y-2" : "space-y-0")}>
               {exploreLinks.map((link, idx) => (
                 <NavLink
                   key={`${link.label}-${idx}`}
@@ -256,7 +265,8 @@ export default function Sidebar({ onClose }) {
                   className={({ isActive }) =>
                     clsx(
                       "relative group flex gap-2 rounded transition-colors w-full min-w-0",
-                      collapsed ? "flex-col items-center py-3 px-0" : "items-center py-2 px-3",
+                      // Collapsed links get py-3 and flex-col for consistent sizing/gap
+                      collapsed ? "flex-col items-center py-3 px-0" : "items-center py-2 px-3", 
                       isActive ? "bg-indigo-50 text-indigo-600" : "text-slate-700 hover:bg-indigo-50"
                     )
                   }
@@ -279,7 +289,8 @@ export default function Sidebar({ onClose }) {
               My clubs
             </h3>
 
-            <div className="space-y-0">
+            {/* MODIFIED: space-y-2 for vertical gap when collapsed */}
+            <div className={clsx("space-y-0", collapsed ? "space-y-2" : "space-y-0")}>
               {myClubLinks.map((link, idx) => (
                 <a
                   key={`${link.label}-${idx}`}
@@ -303,7 +314,7 @@ export default function Sidebar({ onClose }) {
 
         {/* Footer */}
         <div className="flex-none border-t border-slate-300 bg-white">
-          {/* Utility links: visible only when expanded */}
+          {/* Utility links: visible only when expanded (unchanged) */}
           {!collapsed && (
             <div className="px-2 py-3">
               {utilityLinks.map((item, idx) => (
@@ -325,39 +336,34 @@ export default function Sidebar({ onClose }) {
             </div>
           )}
 
-          {/* bottom row: profile + collapsed trigger (MODIFIED) */}
+          {/* bottom row: profile + collapsed trigger */}
           <div className="sticky bottom-0 bg-white py-3 px-2">
-            {/* When collapsed, this area holds the single icon. When expanded, it holds the profile link and menu button. */}
             <div className={clsx(
                 "flex items-center relative",
-                collapsed ? "px-0" : "px-3" 
+                // MODIFIED: space-y-2 for smaller vertical gap in footer
+                collapsed ? "px-0 space-y-2" : "px-3" 
             )}>
               
               {/* Profile Link/Icon Button */}
               <NavLink
-                ref={profileLinkRef} // Use the ref here
+                ref={profileLinkRef}
                 to="/profile"
                 onClick={(e) => {
-                  // If collapsed, prevent default navigation and open the menu
                   if (collapsed) {
                     e.preventDefault(); 
                     setMenuOpen((s) => !s);
                   }
-                  // Otherwise, let NavLink handle the navigation to /profile
                 }}
-                // Tooltip text swaps based on collapsed state
+                // Tooltip text swaps and uses updated logic
                 onMouseEnter={(e) => collapsed && showTooltip(e, "Menu", "right")} 
                 onMouseLeave={hideTooltip}
                 onFocus={(e) => collapsed && showTooltip(e, "Menu", "right")}
                 onBlur={hideTooltip}
                 className={({ isActive }) => clsx(
                     "flex items-center gap-3 rounded-lg hover:bg-indigo-50",
-                    // Collapsed style (icon only, centered, uses similar padding/margin as main links)
-                    collapsed ? "flex-col items-center py-3 px-0 w-full text-slate-300" : 
-                    // Expanded style (text + icon, left aligned, mimic nav link padding)
+                    collapsed ? "flex-col items-center py-3 px-0 w-full text-slate-700" : 
                     "px-3 py-2 w-full text-left",
-                    // Active style 
-                    isActive && !collapsed ? "bg-indigo-50 text-indigo-600" : "text-slate-300"
+                    isActive && !collapsed ? "bg-indigo-50 text-indigo-600" : "text-slate-700"
                 )}
                 aria-haspopup={collapsed ? "true" : "false"}
                 aria-expanded={menuOpen}
@@ -365,7 +371,6 @@ export default function Sidebar({ onClose }) {
                 {/* Icon - SOURCE SWAPPED HERE */}
                 <div className={collapsed ? "justify-center w-full" : ""}>
                     <img 
-                        // 💡 CORE CHANGE: Use toggleMenuIcon when collapsed, userIcon when expanded
                         src={collapsed ? toggleMenuIcon : userIcon} 
                         alt={collapsed ? "menu" : "profile"} 
                         className="w-5 h-5 shrink-0 object-contain block mx-auto" 
@@ -381,20 +386,19 @@ export default function Sidebar({ onClose }) {
                 )}
               </NavLink>
 
-              {/* Popup menu: shown only when collapsed + menuOpen true */}
+              {/* Popup menu */}
               {collapsed && menuOpen && (
-               <div
-                      ref={menuRef}
-                      role="menu"
-                      aria-label="Profile menu"
-                      className={clsx(
-                        "absolute left-full bottom-20 ml-3 w-48 rounded-lg bg-white z-50 text-sm overflow-hidden transform-gpu transition-all duration-150",
-                        // --- MODIFIED BORDER AND SHADOW ---
-                        "border-2 border-slate-200 shadow-2xl" // Example: 2px light indigo border and a stronger shadow
-                      )}
-                      style={{ minWidth: 192 }}
-                    >
-                  <ul className="py-2 border-slate-200">
+                <div
+                  ref={menuRef}
+                  role="menu"
+                  aria-label="Profile menu"
+                  className={clsx(
+                    "absolute left-full bottom-20 ml-3 w-48 rounded-lg bg-white z-50 text-sm overflow-hidden transform-gpu transition-all duration-150",
+                    "border-2 border-indigo-300 shadow-2xl" // The stylized border
+                  )}
+                  style={{ minWidth: 192 }}
+                >
+                  <ul className="py-2">
                     <li>
                       <NavLink to="/profile" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 px-4 py-2 hover:bg-slate-50">
                         <img src={userIcon} className="w-4 h-4" alt="profile" onError={(e) => imgOnError(e, "P")} />
