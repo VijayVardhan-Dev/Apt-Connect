@@ -58,7 +58,7 @@ const ClubCreationModal = ({ isOpen, onClose }) => {
   return createPortal(
     // 1. BACKDROP: Full screen fixed overlay (70% opacity)
     <div 
-    className="fixed inset-0 z-9999 bg-transparent transition-opacity" 
+    className="fixed inset-0 z-9999 bg-transparent transition-opacity backdrop-blur-sm" 
       onClick={onClose}
     >
       
