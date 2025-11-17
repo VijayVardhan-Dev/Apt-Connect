@@ -346,7 +346,7 @@ export default function Sidebar({ onClose }) {
                     clsx(
                       "flex items-center gap-3 py-2 px-3 rounded transition-colors w-full",
                       "hover:bg-indigo-50",
-                      isActive ? "text-indigo-600" : "text-slate-700"
+                      isActive ? "text-h2color" : "text-h1color"
                     )
                   }
                 >
