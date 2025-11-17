@@ -1,4 +1,4 @@
-// Sidebar.jsx (Final Code with Forced Collapse Logic)
+// Sidebar.jsx (Final Code with Corrected Conditional Menu Items)
 
 import React, { useState, useEffect, useRef } from "react";
 import { NavLink, useLocation } from "react-router-dom";
@@ -81,11 +81,8 @@ export default function Sidebar({ onClose }) {
   const menuRef = useRef(null);
   const profileLinkRef = useRef(null); 
 
-  // 💡 CORE LOGIC MODIFICATION: Force collapse if on the chat route
-  // Assumes your chat route starts with '/chat' or '/messages'
+  // --- Logic derived from state ---
   const IS_CHAT_ROUTE = location.pathname.startsWith('/chat') || location.pathname.startsWith('/messages');
-  
-  // Sidebar is small if auto-collapsed OR if we are on the chat route
   const isSidebarSmall = collapsed || IS_CHAT_ROUTE;
   const asideWidthClass = isSidebarSmall ? "w-20" : "w-80";
 
@@ -408,8 +405,7 @@ export default function Sidebar({ onClose }) {
                   role="menu"
                   aria-label="Profile menu"
                   className={clsx(
-                    "absolute left-full ml-3 w-60 rounded-lg bg-white z-50 text-sm overflow-hidden shadow-2xl border-2 border-indigo-300 transform-gpu transition-all duration-150",
-                    "bottom-3" 
+                    "absolute left-full ml-3 bottom-4 w-60 rounded-lg bg-white z-50 text-sm overflow-hidden shadow-2xl border-2 border-indigo-300 transform-gpu transition-all duration-150"
                   )}
                   style={{ minWidth: 240 }}
                 >
@@ -432,32 +428,35 @@ export default function Sidebar({ onClose }) {
                     {/* Divider */}
                     <hr className="border-gray-200" />
                     
-                    {/* Settings */}
+                    {/* Settings (Always visible) */}
                     <li>
                       <NavLink to="/settings" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 px-4 py-2 hover:bg-slate-50">
                         <img src={settingsIcon} className="w-4 h-4" alt="settings" onError={(e) => imgOnError(e, "S")} />
                         <span>Settings</span>
                       </NavLink>
                     </li>
-                    {/* Feedback (Restored) */}
-                    <li>
-                      <NavLink to="/feedback" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 px-4 py-2 hover:bg-slate-50">
-                        <img src={feedbackIcon} className="w-4 h-4" alt="feedback" onError={(e) => imgOnError(e, "F")} />
-                        <span>Feedback</span>
-                      </NavLink>
-                    </li>
-                    {/* Help */}
-                    <li>
-                      <NavLink to="/help" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 px-4 py-2 hover:bg-slate-50">
-                        <img src={helpIcon} className="w-4 h-4" alt="help" onError={(e) => imgOnError(e, "H")} />
-                        <span>Help</span>
-                      </NavLink>
-                    </li>
+                    
+                    {/* Feedback and Help (VISIBLE ONLY WHEN COLLAPSED) */}
+                    {isSidebarSmall && (
+                      <>
+                        <li>
+                          <NavLink to="/feedback" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 px-4 py-2 hover:bg-slate-50">
+                            <img src={feedbackIcon} className="w-4 h-4" alt="feedback" onError={(e) => imgOnError(e, "F")} />
+                            <span>Feedback</span>
+                          </NavLink>
+                        </li>
+                        <li>
+                          <NavLink to="/help" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 px-4 py-2 hover:bg-slate-50">
+                            <img src={helpIcon} className="w-4 h-4" alt="help" onError={(e) => imgOnError(e, "H")} />
+                            <span>Help</span>
+                          </NavLink>
+                        </li>
+                        {/* Divider only necessary if collapsed items are visible */}
+                        <hr className="border-gray-200" />
+                      </>
+                    )}
 
-                    {/* Divider */}
-                    <hr className="border-gray-200" />
-
-                    {/* Sign Out */}
+                    {/* Sign Out (Always visible) */}
                     <li>
                       <button
                         onClick={() => {
