@@ -1,8 +1,9 @@
 // Sidebar.jsx (Complete Code with Final Icon Swap)
 
 import React, { useState, useEffect, useRef } from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { createPortal } from "react-dom";
+import { useAuth } from "../../context/AuthContext";
 
 // Helper for conditional class names
 const clsx = (...classes) => classes.filter(Boolean).join(' ');
@@ -53,6 +54,8 @@ function TooltipPortal({ data }) {
 /* ---------------- Sidebar Component ---------------- */
 export default function Sidebar({ onClose }) {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
   // responsive triggers
   const [collapsed, setCollapsed] = useState(
@@ -191,6 +194,24 @@ export default function Sidebar({ onClose }) {
                     </NavLink>
                   </li>
                 ))}
+                {/* Logout button for mobile */}
+                <li className="flex-1 relative">
+                  <button
+                    onClick={async () => {
+                      await logout();
+                      navigate("/login");
+                    }}
+                    onMouseEnter={(e) => showTooltip(e, "Logout", "top")}
+                    onMouseLeave={hideTooltip}
+                    onFocus={(e) => showTooltip(e, "Logout", "top")}
+                    onBlur={hideTooltip}
+                    className="group relative flex flex-col items-center justify-center h-full py-1 text-slate-600 hover:text-red-600 transition-colors"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 object-contain transition-transform duration-150" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h4a2 2 0 012 2v1" />
+                    </svg>
+                  </button>
+                </li>
               </ul>
             </div>
           </div>
@@ -322,6 +343,20 @@ export default function Sidebar({ onClose }) {
                   <span className="ml-2">{item.label}</span>
                 </NavLink>
               ))}
+              
+              {/* Logout button for desktop expanded */}
+              <button
+                onClick={async () => {
+                  await logout();
+                  navigate("/login");
+                }}
+                className="flex items-center gap-3 py-2 px-3 rounded transition-colors w-full hover:bg-red-50 text-slate-700 hover:text-red-600"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="flex-none w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h4a2 2 0 012 2v1" />
+                </svg>
+                <span className="ml-2">Logout</span>
+              </button>
             </div>
           )}
 
@@ -376,7 +411,7 @@ export default function Sidebar({ onClose }) {
                 {/* User Name (Hidden when collapsed) */}
                 {!collapsed && (
                     <span className="ml-2 font-medium whitespace-nowrap overflow-hidden text-ellipsis">
-                        John Doe
+                        {user?.displayName || "User"}
                     </span>
                 )}
               </NavLink>
@@ -425,13 +460,14 @@ export default function Sidebar({ onClose }) {
 
                     <li>
                       <button
-                        onClick={() => {
+                        onClick={async () => {
                           setMenuOpen(false);
-                          // TODO: add logout logic
+                          await logout();
+                          navigate("/login");
                         }}
-                        className="w-full text-left px-4 py-2 hover:bg-slate-50 flex items-center gap-3"
+                        className="w-full text-left px-4 py-2 hover:bg-red-50 flex items-center gap-3 text-slate-700 hover:text-red-600"
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h4a2 2 0 012 2v1" />
                         </svg>
                         <span>Log out</span>
