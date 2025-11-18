@@ -1,3 +1,4 @@
+// src/routes/AppRouter.jsx
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
@@ -11,20 +12,18 @@ import Showcase from "../pages/Showcase/Showcase";
 import Chat from "../pages/Chat/Chat";
 import Profile from "../pages/Profile/Profile";
 import Settings from "../pages/Settings/Settings";
-import MembersList from "../pages/Chat/Members";
 import NotFound from "../pages/NotFound";
-import Feedback from "../pages/Feedback/Feedback";
-import Help from "../pages/Help/Help";
+
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import DashboardLayout from "../components/layout/DashboardLayout";
+import PrivateRoute from "./PrivateRoute";
 
 const AppRouter = () => {
   return (
     <Router>
-      {/* Navbar + Footer only for public pages */}
       <Routes>
-        {/* Public Routes */}
+        {/* Public */}
         <Route
           path="/"
           element={
@@ -35,104 +34,78 @@ const AppRouter = () => {
             </>
           }
         />
-        <Route
-          path="/login"
-          element={
-            <>
-              <Login />
-            </>
-          }
-        />
-        <Route
-          path="/register"
-          element={
-            <>
-              <Register />
-            </>
-          }
-        />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
 
-        {/* Dashboard Routes (Sidebar + Workspace) */}
+        {/* Protected dashboard routes */}
         <Route
           path="/home"
           element={
-            <DashboardLayout>
-              <Home />
-            </DashboardLayout>
+            <PrivateRoute>
+              <DashboardLayout>
+                <Home />
+              </DashboardLayout>
+            </PrivateRoute>
           }
         />
-
-          <Route
-          path="/members"
-          element={
-            <DashboardLayout>
-              <MembersList/>
-            </DashboardLayout>
-          }
-        />
-
         <Route
           path="/explore"
           element={
-            <DashboardLayout>
-              <Explore />
-            </DashboardLayout>
+            <PrivateRoute>
+              <DashboardLayout>
+                <Explore />
+              </DashboardLayout>
+            </PrivateRoute>
           }
         />
         <Route
           path="/chat"
           element={
-            <DashboardLayout>
-              <Chat />
-            </DashboardLayout>
+            <PrivateRoute>
+              <DashboardLayout>
+                <Chat />
+              </DashboardLayout>
+            </PrivateRoute>
           }
         />
         <Route
           path="/showcase"
           element={
-            <DashboardLayout>
-              <Showcase />
-            </DashboardLayout>
+            <PrivateRoute>
+              <DashboardLayout>
+                <Showcase />
+              </DashboardLayout>
+            </PrivateRoute>
           }
         />
         <Route
           path="/notifications"
           element={
-            <DashboardLayout>
-              <Notifications />
-            </DashboardLayout>
+            <PrivateRoute>
+              <DashboardLayout>
+                <Notifications />
+              </DashboardLayout>
+            </PrivateRoute>
           }
         />
         <Route
           path="/profile"
           element={
-            <DashboardLayout>
-              <Profile />
-            </DashboardLayout>
-          }
-        />
-        <Route
-          path="/feedback"
-          element={
-            <DashboardLayout>
-              <Feedback />
-            </DashboardLayout>
-          }
-        />
-        <Route
-          path="/help"
-          element={
-            <DashboardLayout>
-              <Help />
-            </DashboardLayout>
+            <PrivateRoute>
+              <DashboardLayout>
+                <Profile />
+              </DashboardLayout>
+            </PrivateRoute>
           }
         />
         <Route
           path="/settings"
           element={
-            <DashboardLayout>
-              <Settings />
-            </DashboardLayout>
+            <PrivateRoute>
+              <DashboardLayout>
+                <Settings />
+              </DashboardLayout>
+            </PrivateRoute>
           }
         />
 
