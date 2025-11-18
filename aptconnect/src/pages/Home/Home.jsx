@@ -11,8 +11,8 @@ import viewsIcon from "../../assets/icons/views_icon.png";
 import likeIcon from "../../assets/icons/like_icon.png";
 import saveIcon from "../../assets/icons/save_icon.png";
 import commentIcon from "../../assets/icons/comment_icon.png";
-import searchIcon from "../../assets/icons/search_icon.png";
-import profileIcon from "../../assets/icons/profile_icon.png";
+// import searchIcon from "../../assets/icons/search_icon.png";
+// import profileIcon from "../../assets/icons/profile_icon.png";
 // Helper for conditional class names
 const clsx = (...classes) => classes.filter(Boolean).join(' ');
 

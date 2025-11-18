@@ -1,4 +1,4 @@
-// Sidebar.jsx (Final Code with Corrected Conditional Menu Items)
+// Sidebar.jsx (Final Code with Popup Position Fixed to bottom-16)
 
 import React, { useState, useEffect, useRef } from "react";
 import { NavLink, useLocation } from "react-router-dom";
@@ -343,7 +343,7 @@ export default function Sidebar({ onClose }) {
                     clsx(
                       "flex items-center gap-3 py-2 px-3 rounded transition-colors w-full",
                       "hover:bg-indigo-50",
-                      isActive ? "text-h2color" : "text-h1color"
+                      isActive ? "text-indigo-600" : "text-slate-700"
                     )
                   }
                 >
@@ -355,7 +355,7 @@ export default function Sidebar({ onClose }) {
           )}
 
           {/* bottom row: profile + collapsed trigger */}
-          <div className="sticky bottom-0 bg-white py-3 px-2">
+          <div className="sticky bottom-2 bg-white py-3 px-2">
             <div className={clsx(
                 "flex items-center relative",
                 isSidebarSmall ? "px-0 space-y-2" : "px-3" 
@@ -405,7 +405,8 @@ export default function Sidebar({ onClose }) {
                   role="menu"
                   aria-label="Profile menu"
                   className={clsx(
-                    "absolute left-full ml-3 bottom-4 w-60 rounded-lg bg-white z-50 text-sm overflow-hidden shadow-2xl border-2 border-indigo-300 transform-gpu transition-all duration-150"
+                    "absolute left-full ml-3 w-60 rounded-lg bg-white z-50 text-sm overflow-hidden shadow-2xl border-2 border-slate-300 transform-gpu transition-all duration-150",
+                    "bottom-5" // FIXED: Pushed up from the bottom edge
                   )}
                   style={{ minWidth: 240 }}
                 >
