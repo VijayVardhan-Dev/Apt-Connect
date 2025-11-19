@@ -74,16 +74,16 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white py-8 text-gray-900">
+    <div className="min-h-screen bg-white py-8 text-slate-800">
       
       {/* 💡 MODIFIED CONTAINER: Removed mx-auto. Uses max-w-3xl for readable width 
           and relies on the parent Dashboard Layout (which offsets the sidebar)
           to position this content correctly on the left. */}
-      <div className="w-full max-w-3xl px-4 sm:px-6"> 
+      <div className="w-full max-auto max-w-7xl px-4 sm:px-6 lg:px-8"> 
         
         {/* Header */}
         <div className="flex items-center mb-8">
-          <ArrowLeft className="w-6 h-6 cursor-pointer text-gray-800 hover:text-indigo-600 transition" />
+          <ArrowLeft className="w-6 h-6 cursor-pointer text-slate-800 hover:text-indigo-600 transition" />
           <h2 className="text-xl font-medium ml-4">Settings</h2> 
         </div>
 
@@ -97,8 +97,8 @@ export default function SettingsPage() {
             className="w-14 h-14 rounded-full object-cover border-2 border-indigo-400"
           />
           <div>
-            <p className="text-sm text-gray-600">Profile</p>
-            <h3 className="text-base font-semibold text-gray-900">
+            <p className="text-sm text-slate-800">Profile</p>
+            <h3 className="text-base font-semibold text-slate-800">
               Bora Gunasekhar
             </h3>
           </div>
@@ -117,9 +117,9 @@ export default function SettingsPage() {
                   aria-expanded={isOpen}
                   aria-controls={`section-content-${i}`}
                 >
-                  <span className="text-[15px] font-medium text-gray-800">{sec.title}</span>
+                  <span className="text-[15px] font-medium text-slate-800">{sec.title}</span>
                   <ChevronDown
-                    className={`w-4 h-4 text-gray-600 transform transition-transform duration-200 ${
+                    className={`w-4 h-4 text-slate-800 transform transition-transform duration-200 ${
                       isOpen ? "rotate-180" : "rotate-0"
                     }`}
                   />
@@ -131,7 +131,7 @@ export default function SettingsPage() {
                     isOpen ? "max-h-80 py-3" : "max-h-0"
                   }`}
                 >
-                  <div className="text-sm text-gray-700 pl-4">{sec.content}</div> 
+                  <div className="text-sm text-slate-800 pl-4">{sec.content}</div> 
                 </div>
               </div>
             );
@@ -152,7 +152,7 @@ export default function SettingsPage() {
             onClick={() => setShowLogoutModal(true)}
             className="w-full flex justify-between items-center py-3 px-0 cursor-pointer hover:bg-gray-50 transition rounded-md"
           >
-            <span className="text-[15px] font-medium text-gray-800">Logout</span>
+            <span className="text-[15px] font-medium text-slate-800">Logout</span>
           </button>
         </div>
       </div>
@@ -166,11 +166,11 @@ export default function SettingsPage() {
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-medium">Confirm Logout</h3>
               <X
-                className="w-5 h-5 cursor-pointer text-gray-600 hover:text-gray-800"
+                className="w-5 h-5 cursor-pointer text-slate-800 hover:text-slate-800"
                 onClick={closeModal(setShowLogoutModal)}
               />
             </div>
-            <p className="text-sm text-gray-600 mb-6">
+            <p className="text-sm text-slate-800 mb-6">
               Are you sure you want to log out of your account?
             </p>
             <div className="flex justify-end gap-3">
@@ -200,11 +200,11 @@ export default function SettingsPage() {
                 Delete Account
               </h3>
               <X
-                className="w-5 h-5 cursor-pointer text-gray-600 hover:text-gray-800"
+                className="w-5 h-5 cursor-pointer text-slate-800 hover:text-slate-800"
                 onClick={closeModal(setShowDeleteModal)}
               />
             </div>
-            <p className="text-sm text-gray-600 mb-6">
+            <p className="text-sm text-slate-800 mb-6">
               This action is permanent. Are you sure you want to delete your
               account?
             </p>

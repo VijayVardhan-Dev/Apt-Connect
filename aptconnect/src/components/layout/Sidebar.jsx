@@ -1,4 +1,4 @@
-// Sidebar.jsx (Final Code with Popup Position Fixed to bottom-16)
+// Sidebar.jsx (Final Code - Chat Auto-Collapse Logic Removed)
 
 import React, { useState, useEffect, useRef } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
@@ -68,7 +68,8 @@ const imgOnError = (e, txt = "X", size = 24) => {
 export default function Sidebar({ onClose }) {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  // Assuming useAuth is correctly defined in your context file
+  const { user, logout } = useAuth(); 
 
   // State Management (Responsive & Menu Control)
   const [collapsed, setCollapsed] = useState(
@@ -85,8 +86,10 @@ export default function Sidebar({ onClose }) {
   const profileLinkRef = useRef(null); 
 
   // --- Logic derived from state ---
-  const IS_CHAT_ROUTE = location.pathname.startsWith('/chat') || location.pathname.startsWith('/messages');
-  const isSidebarSmall = collapsed || IS_CHAT_ROUTE;
+  // REMOVED: IS_CHAT_ROUTE definition
+
+  // 💡 CORE FIX: Sidebar is small based ONLY on the window width (collapsed)
+  const isSidebarSmall = collapsed; 
   const asideWidthClass = isSidebarSmall ? "w-20" : "w-80";
 
   // --- Data Structures ---
@@ -220,24 +223,6 @@ export default function Sidebar({ onClose }) {
                     </NavLink>
                   </li>
                 ))}
-                {/* Logout button for mobile */}
-                <li className="flex-1 relative">
-                  <button
-                    onClick={async () => {
-                      await logout();
-                      navigate("/login");
-                    }}
-                    onMouseEnter={(e) => showTooltip(e, "Logout", "top")}
-                    onMouseLeave={hideTooltip}
-                    onFocus={(e) => showTooltip(e, "Logout", "top")}
-                    onBlur={hideTooltip}
-                    className="group relative flex flex-col items-center justify-center h-full py-1 text-slate-600 hover:text-red-600 transition-colors"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 object-contain transition-transform duration-150" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h4a2 2 0 012 2v1" />
-                    </svg>
-                  </button>
-                </li>
               </ul>
             </div>
           </div>
@@ -372,25 +357,11 @@ export default function Sidebar({ onClose }) {
                   <span className="ml-2">{item.label}</span>
                 </NavLink>
               ))}
-              
-              {/* Logout button for desktop expanded */}
-              <button
-                onClick={async () => {
-                  await logout();
-                  navigate("/login");
-                }}
-                className="flex items-center gap-3 py-2 px-3 rounded transition-colors w-full hover:bg-red-50 text-slate-700 hover:text-red-600"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="flex-none w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h4a2 2 0 012 2v1" />
-                </svg>
-                <span className="ml-2">Logout</span>
-              </button>
             </div>
           )}
 
           {/* bottom row: profile + collapsed trigger */}
-          <div className="sticky bottom-2 bg-white py-3 px-2">
+          <div className="sticky bottom-0 bg-white py-3 px-2">
             <div className={clsx(
                 "flex items-center relative",
                 isSidebarSmall ? "px-0 space-y-2" : "px-3" 
@@ -440,8 +411,8 @@ export default function Sidebar({ onClose }) {
                   role="menu"
                   aria-label="Profile menu"
                   className={clsx(
-                    "absolute left-full ml-3 w-60 rounded-lg bg-white z-50 text-sm overflow-hidden shadow-2xl border-2 border-slate-300 transform-gpu transition-all duration-150",
-                    "bottom-5" // FIXED: Pushed up from the bottom edge
+                    "absolute left-full ml-3 w-60 rounded-lg bg-white z-50 text-sm overflow-hidden shadow-2xl border-2 border-indigo-300 transform-gpu transition-all duration-150",
+                    "bottom-10" 
                   )}
                   style={{ minWidth: 240 }}
                 >
@@ -456,7 +427,7 @@ export default function Sidebar({ onClose }) {
                       >
                         <img src={userIcon} className="w-6 h-6" alt="Profile Icon" onError={(e) => imgOnError(e, "P", 24)} />
                         <span className="text-sm font-medium text-gray-900 truncate">
-                          boralakshmiprasad0@gmail.com {/* Static Email Placeholder */}
+                          {user?.email || "boralakshmiprasad0@gmail.com"}
                         </span>
                       </NavLink>
                     </li>
@@ -497,7 +468,8 @@ export default function Sidebar({ onClose }) {
                       <button
                         onClick={async () => {
                           setMenuOpen(false);
-                          await logout();
+                          // Use the imported logout function
+                          await logout(); 
                           navigate("/login");
                         }}
                         className="w-full text-left px-4 py-2 hover:bg-red-50 flex items-center gap-3 text-slate-700 hover:text-red-600"
