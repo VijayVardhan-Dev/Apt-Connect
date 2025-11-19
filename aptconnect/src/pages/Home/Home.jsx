@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Plus } from "lucide-react"; 
-import ClubCreationModal from "/src/components/ui/ClubCreationModal"; 
 import Post from "../../components/ui/Post.jsx"; 
 import clubDp from "../../assets/images/club_dp.png";
 import postImg from "../../assets/images/post.png";
@@ -68,9 +68,9 @@ const posts = [
 ];
 
 export default function Home() {
+  const navigate = useNavigate();
   const avatars = [postImg,postImg,postImg,postImg,postImg,postImg,postImg,postImg];
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(
     typeof window !== "undefined" ? window.innerWidth <= 850 : false
   );
@@ -84,18 +84,12 @@ export default function Home() {
   }, []);
 
   const handleCreateClick = () => {
-      setIsModalOpen(true);
+      navigate("/create-club");
   };
 
   return (
     <div className="min-h-screen bg-white text-slate-900 relative">
       
-      {/* ===== Club Creation Modal ===== */}
-      <ClubCreationModal 
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-      />
-
       {/* ===== Centered content column (Feed) ===== */}
       <main className="max-w-3xl mx-auto px-4 py-6 space-y-8">
         

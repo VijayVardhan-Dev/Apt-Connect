@@ -56,8 +56,8 @@ const DashboardLayout = ({ children }) => {
 
       {/* Main workspace */}
       {/* Added overflow-x-hidden to prevent any horizontal scrollbars */}
-      <div className="flex-1 flex  overflow-x-hidden">
-        <main className="flex-1  overflow-y-auto">{children}</main>
+      <div className="flex-1 flex flex-col overflow-x-hidden w-full">
+        <main className="flex-1 overflow-y-auto w-full">{children}</main>
       </div>
       
     </div>

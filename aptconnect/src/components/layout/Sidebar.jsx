@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { createPortal } from "react-dom";
-import { useAuth } from "../../context/AuthContext";
+import useAuth from "../../hooks/useAuth";
 
 // ---------------------------------------------------------------------
 // 1. IMPORTS & UTILITIES
@@ -65,19 +65,15 @@ const imgOnError = (e, txt = "X", size = 24) => {
 // 2. MAIN SIDEBAR COMPONENT START
 // ---------------------------------------------------------------------
 
-export default function Sidebar({ onClose }) {
+export default function Sidebar({ collapsed, bottomBar }) {
   const location = useLocation();
   const navigate = useNavigate();
   // Assuming useAuth is correctly defined in your context file
   const { user, logout } = useAuth(); 
 
   // State Management (Responsive & Menu Control)
-  const [collapsed, setCollapsed] = useState(
-    typeof window !== "undefined" ? window.innerWidth <= 850 : false
-  );
-  const [bottomBar, setBottomBar] = useState(
-    typeof window !== "undefined" ? window.innerWidth <= 500 : false
-  );
+  // REMOVED: Internal collapsed/bottomBar state. Now receiving props.
+  
   const [menuOpen, setMenuOpen] = useState(false);
   const [tooltip, setTooltip] = useState({ visible: false, x: 0, y: 0, text: "", placement: "right" });
 
@@ -116,20 +112,7 @@ export default function Sidebar({ onClose }) {
   ];
 
   // Handle Resize Events (Auto Collapse/Bottom Bar Logic)
-  useEffect(() => {
-    const handleResize = () => {
-      const w = window.innerWidth;
-      const isAutoCollapsed = w <= 850;
-      
-      setCollapsed(isAutoCollapsed);
-      setBottomBar(w <= 500);
-
-      if (w > 850) setMenuOpen(false);
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  // REMOVED: Internal resize listener. Parent handles this now.
 
   // Handle Click Outside (Close Collapsed Menu)
   useEffect(() => {

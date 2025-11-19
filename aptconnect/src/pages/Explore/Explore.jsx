@@ -1,15 +1,10 @@
 // src/pages/Explore/Explore.jsx
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { collection, getDocs, query, orderBy } from "firebase/firestore";
+import { db } from "../../lib/firebase";
 import ClubCard from "../../components/ui/ClubCard";
-
-const projects = Array.from({ length: 12 }).map((_, i) => ({
-  id: i + 1,
-  title: "AI Sorting Robot",
-  author: "Robotics Club",
-  tagline: "Automized diagnosis and medical improvement",
-  image: "https://placehold.co/318x159",
-}));
+import { Loader2 } from "lucide-react";
 
 const categories = [
   "Dance",
@@ -26,8 +21,57 @@ const categories = [
 
 export default function Explore() {
   const navigate = useNavigate();
-  const topThree = projects.slice(0, 3);
-  const recommended = projects.slice(3, 9);
+  const [clubs, setClubs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState(null);
+
+  useEffect(() => {
+    const fetchClubs = async () => {
+      try {
+        const q = query(collection(db, "clubs"), orderBy("createdAt", "desc"));
+        const querySnapshot = await getDocs(q);
+        const clubsData = querySnapshot.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            ...data,
+            // Map fields for ClubCard
+            title: data.name,
+            image: data.profileURL || "https://placehold.co/318x159",
+            author: data.category || "General",
+            tagline: data.tagline || data.description || "No description available",
+          };
+        });
+        setClubs(clubsData);
+      } catch (error) {
+        console.error("Error fetching clubs:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchClubs();
+  }, []);
+
+  const filteredClubs = clubs.filter((club) => {
+    const matchesSearch = club.title.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = selectedCategory
+      ? club.category?.toLowerCase() === selectedCategory.toLowerCase()
+      : true;
+    return matchesSearch && matchesCategory;
+  });
+
+  const topThree = filteredClubs.slice(0, 3);
+  const recommended = filteredClubs.slice(3);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+      </div>
+    );
+  }
 
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -55,6 +99,8 @@ export default function Explore() {
               type="search"
               placeholder="search clubs"
               className="w-full h-10 pl-10 pr-4 rounded-md bg-neutral-100 border border-stone-300 text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-bordercolor"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
         </div>
@@ -62,49 +108,90 @@ export default function Explore() {
         <div className="w-8" />
       </header>
 
-      {/* CATEGORIES */}
-      <div className="mt-6">
-        <button className="bg-blue-600 text-white px-4 py-1.5 rounded-md text-sm">
-          categories
-        </button>
-
-        <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-3">
-          {categories.map((c) => (
-            <button
-              key={c}
-              className="py-1.5 px-3 border border-slate-300 rounded-md text-xs text-slate-700 bg-white hover:shadow-sm"
+      {searchTerm ? (
+        <div className="mt-8">
+          <h2 className="text-lg font-semibold mb-6">Search Results</h2>
+          {filteredClubs.length > 0 ? (
+            <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+              {filteredClubs.map((club) => (
+                <ClubCard
+                  key={club.id}
+                  club={club}
+                  onClick={() => navigate(`/club/${club.id}`)}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="mt-12 text-center text-gray-500">
+              <p>No clubs found matching "{searchTerm}".</p>
+            </div>
+          )}
+        </div>
+      ) : (
+        <>
+          {/* CATEGORIES */}
+          <div className="mt-6">
+            <button 
+              className="bg-blue-600 text-white px-4 py-1.5 rounded-md text-sm"
+              onClick={() => setSelectedCategory(null)}
             >
-              {c}
+              All Categories
             </button>
-          ))}
-        </div>
-      </div>
 
-      {/* TOP CLUBS */}
-      <Section title="Top Clubs" linkText="View all">
-        <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-          {topThree.map((club) => (
-            <ClubCard
-              key={club.id}
-              club={club}
-              onClick={() => navigate(`/club/${club.id}`)}
-            />
-          ))}
-        </div>
-      </Section>
+            <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-3">
+              {categories.map((c) => (
+                <button
+                  key={c}
+                  onClick={() => setSelectedCategory(c === selectedCategory ? null : c)}
+                  className={`py-1.5 px-3 border rounded-md text-xs transition hover:shadow-sm ${
+                    selectedCategory === c
+                      ? "bg-blue-100 border-blue-500 text-blue-700"
+                      : "border-slate-300 text-slate-700 bg-white"
+                  }`}
+                >
+                  {c}
+                </button>
+              ))}
+            </div>
+          </div>
 
-      {/* RECOMMENDED */}
-      <Section title="Recommended" linkText="View all" className="mt-12 mb-16">
-        <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-          {recommended.map((club) => (
-            <ClubCard
-              key={club.id}
-              club={club}
-              onClick={() => navigate(`/club/${club.id}`)}
-            />
-          ))}
-        </div>
-      </Section>
+          {/* TOP CLUBS */}
+          {topThree.length > 0 && (
+            <Section title="Top Clubs" linkText="View all">
+              <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+                {topThree.map((club) => (
+                  <ClubCard
+                    key={club.id}
+                    club={club}
+                    onClick={() => navigate(`/club/${club.id}`)}
+                  />
+                ))}
+              </div>
+            </Section>
+          )}
+
+          {/* RECOMMENDED */}
+          {recommended.length > 0 && (
+            <Section title="Recommended" linkText="View all" className="mt-12 mb-16">
+              <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+                {recommended.map((club) => (
+                  <ClubCard
+                    key={club.id}
+                    club={club}
+                    onClick={() => navigate(`/club/${club.id}`)}
+                  />
+                ))}
+              </div>
+            </Section>
+          )}
+
+          {filteredClubs.length === 0 && (
+            <div className="mt-12 text-center text-gray-500">
+              <p>No clubs found matching your criteria.</p>
+            </div>
+          )}
+        </>
+      )}
     </section>
   );
 }

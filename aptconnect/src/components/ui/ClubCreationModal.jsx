@@ -1,22 +1,32 @@
 // components/ClubCreationModal.jsx
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { createPortal } from "react-dom";
-import { Camera, Plus, X } from "lucide-react";
+import { Camera, Plus, X, Loader2 } from "lucide-react";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { db } from "../../lib/firebase";
+import { handleUpload } from "../../lib/upload";
+import useAuth from "../../hooks/useAuth";
 
 const ClubCreationModal = ({ isOpen, onClose }) => {
+  const { user } = useAuth();
   const [profilePic, setProfilePic] = useState(null);
+  const [fileToUpload, setFileToUpload] = useState(null);
   const [clubName, setClubName] = useState("");
   const [category, setCategory] = useState("");
   const [isOtherCategory, setIsOtherCategory] = useState(false); // Tracks visibility of custom category input
   const [bio, setBio] = useState("");
   const [requirements, setRequirements] = useState([""]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!isOpen) return null;
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    if (file) setProfilePic(URL.createObjectURL(file));
+    if (file) {
+      setProfilePic(URL.createObjectURL(file));
+      setFileToUpload(file);
+    }
   };
 
   const handleAddRequirement = () => {
@@ -45,11 +55,54 @@ const ClubCreationModal = ({ isOpen, onClose }) => {
     }
   };
 
-  const handleCreate = () => {
-    if (!isFormValid) return;
-    // NOTE: This is where Firebase/API submission logic would go.
-    alert(`✅ Club "${clubName}" creation initiated!`);
-    onClose(); 
+  const handleCreate = async () => {
+    if (!isFormValid || isSubmitting) return;
+    
+    if (!user) {
+      alert("You must be logged in to create a club.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      let profileURL = "";
+      if (fileToUpload) {
+        profileURL = await handleUpload(fileToUpload);
+      }
+
+      const clubData = {
+        name: clubName,
+        category: category,
+        description: bio,
+        requirements: requirements.filter(r => r.trim() !== ""),
+        profileURL: profileURL,
+        bannerURL: "", // Default or empty
+        tagline: "", // Default or empty
+        admins: [user.uid],
+        members: [user.uid],
+        membersCount: 1,
+        stories: [],
+        createdBy: user.uid,
+        createdAt: serverTimestamp(),
+      };
+
+      await addDoc(collection(db, "clubs"), clubData);
+
+      alert(`✅ Club "${clubName}" created successfully!`);
+      onClose();
+      // Reset form
+      setClubName("");
+      setCategory("");
+      setBio("");
+      setRequirements([""]);
+      setProfilePic(null);
+      setFileToUpload(null);
+    } catch (error) {
+      console.error("Error creating club:", error);
+      alert("Failed to create club. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const isFormValid =
@@ -210,14 +263,21 @@ const ClubCreationModal = ({ isOpen, onClose }) => {
                 {/* Create Button */}
                 <button
                   onClick={handleCreate}
-                  disabled={!isFormValid}
-                  className={`w-full mt-6 py-3 rounded-md text-base font-semibold transition ${
-                    isFormValid
+                  disabled={!isFormValid || isSubmitting}
+                  className={`w-full mt-6 py-3 rounded-md text-base font-semibold transition flex items-center justify-center ${
+                    isFormValid && !isSubmitting
                       ? "bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500"
                       : "bg-gray-200 text-gray-500 cursor-not-allowed"
                   }`}
                 >
-                  Create Club
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                      Creating...
+                    </>
+                  ) : (
+                    "Create Club"
+                  )}
                 </button>
             </div>
           </div>
