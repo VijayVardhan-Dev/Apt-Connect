@@ -4,6 +4,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { createPortal } from "react-dom";
 import useAuth from "../../hooks/useAuth";
+import { collection, onSnapshot, query, where } from "firebase/firestore";
+import { db } from "../../lib/firebase";
 
 // ---------------------------------------------------------------------
 // 1. IMPORTS & UTILITIES
@@ -97,14 +99,8 @@ export default function Sidebar({ collapsed, bottomBar }) {
     { label: "Notifications", to: "/notifications", icon: notifyIcon },
   ];
 
-  const myClubLinks = [
-    { label: "Ai club", to: "#", icon: clubIcon },
-    { label: "Dance club", to: "#", icon: clubIcon },
-    { label: "Apt gang", to: "#", icon: clubIcon },
-    { label: "Literature", to: "#", icon: clubIcon },
-    { label: "Music club", to: "#", icon: clubIcon },
-    { label: "Art club", to: "#", icon: clubIcon },
-  ];
+  const [myClubs, setMyClubs] = useState([]);
+  const [myClubsLoading, setMyClubsLoading] = useState(false);
 
   const utilityLinks = [
     { label: "Feedback", to: "/feedback", icon: feedbackIcon }, 
@@ -146,6 +142,40 @@ export default function Sidebar({ collapsed, bottomBar }) {
     }
   };
   const hideTooltip = () => setTooltip({ visible: false, x: 0, y: 0, text: "", placement: "right" });
+
+  // Fetch clubs the current user joined
+  useEffect(() => {
+    if (!user?.uid) {
+      setMyClubs([]);
+      setMyClubsLoading(false);
+      return;
+    }
+
+    setMyClubsLoading(true);
+    const q = query(collection(db, "clubs"), where("members", "array-contains", user.uid));
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        const results = snapshot.docs.map((docSnap) => {
+          const data = docSnap.data();
+          return {
+            id: docSnap.id,
+            name: data.name || "Untitled club",
+            image: data.profileURL || clubIcon,
+          };
+        });
+        setMyClubs(results);
+        setMyClubsLoading(false);
+      },
+      (error) => {
+        console.error("Failed to load user clubs", error);
+        setMyClubs([]);
+        setMyClubsLoading(false);
+      }
+    );
+
+    return () => unsubscribe();
+  }, [user?.uid]);
 
 
   // ---------------------------------------------------------------------
@@ -298,22 +328,53 @@ export default function Sidebar({ collapsed, bottomBar }) {
               My clubs
             </h3>
             <div className={clsx("space-y-0", isSidebarSmall ? "space-y-2" : "space-y-0")}>
-              {myClubLinks.map((link, idx) => (
-                <a
-                  key={`${link.label}-${idx}`}
-                  href={link.to}
-                  onMouseEnter={(e) => isSidebarSmall && showTooltip(e, link.label, "right")}
-                  onMouseLeave={hideTooltip}
+              {myClubsLoading && (
+                <div className={clsx(
+                  "text-xs text-slate-400",
+                  isSidebarSmall ? "text-center w-full py-3" : "px-3 py-2"
+                )}>
+                  Loading your clubs...
+                </div>
+              )}
+
+              {!myClubsLoading && myClubs.length === 0 && (
+                <button
+                  type="button"
+                  onClick={() => navigate("/explore")}
                   className={clsx(
-                    "flex gap-2 rounded hover:bg-indigo-50 transition-colors w-full min-w-0",
-                    isSidebarSmall ? "flex-col items-center py-3 px-0" : "items-center py-2 px-3"
+                    "text-xs text-slate-500 border border-dashed border-slate-300 rounded-md",
+                    "hover:border-slate-400 hover:text-slate-700 transition",
+                    isSidebarSmall ? "w-12 h-12 mx-auto flex items-center justify-center" : "w-full py-2 px-3 text-left"
                   )}
                 >
+                  {isSidebarSmall ? "+" : "Join a club to see it here"}
+                </button>
+              )}
+
+              {myClubs.map((club) => (
+                <NavLink
+                  key={club.id}
+                  to={`/club/${club.id}`}
+                  onMouseEnter={(e) => isSidebarSmall && showTooltip(e, club.name, "right")}
+                  onMouseLeave={hideTooltip}
+                  className={({ isActive }) =>
+                    clsx(
+                      "flex gap-2 rounded transition-colors w-full min-w-0",
+                      isSidebarSmall ? "flex-col items-center py-3 px-0" : "items-center py-2 px-3",
+                      isActive ? "bg-indigo-50 text-indigo-600" : "hover:bg-indigo-50"
+                    )
+                  }
+                >
                   <div className={isSidebarSmall ? "justify-center w-full" : ""}>
-                    <img src={link.icon} alt={link.label} className="w-5 h-5 shrink-0 object-contain block mx-auto" onError={(e) => imgOnError(e, "C")} />
+                    <img
+                      src={club.image || clubIcon}
+                      alt={club.name}
+                      className="w-5 h-5 shrink-0 object-cover rounded-full block mx-auto"
+                      onError={(e) => imgOnError(e, "C")}
+                    />
                   </div>
-                  <span className={isSidebarSmall ? "hidden" : "ml-2"}>{link.label}</span>
-                </a>
+                  <span className={isSidebarSmall ? "hidden" : "ml-2 line-clamp-1"}>{club.name}</span>
+                </NavLink>
               ))}
             </div>
           </div>

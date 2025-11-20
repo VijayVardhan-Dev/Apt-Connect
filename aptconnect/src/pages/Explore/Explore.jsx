@@ -40,6 +40,7 @@ export default function Explore() {
             title: data.name,
             image: data.profileURL || "https://placehold.co/318x159",
             author: data.category || "General",
+            category: data.category || "General",
             tagline: data.tagline || data.description || "No description available",
           };
         });
@@ -117,7 +118,7 @@ export default function Explore() {
                 <ClubCard
                   key={club.id}
                   club={club}
-                  onClick={() => navigate(`/club/${club.id}`)}
+                  onClick={() => navigate(`/club/${club.id}`, { state: { club } })}
                 />
               ))}
             </div>
@@ -163,7 +164,7 @@ export default function Explore() {
                   <ClubCard
                     key={club.id}
                     club={club}
-                    onClick={() => navigate(`/club/${club.id}`)}
+                    onClick={() => navigate(`/club/${club.id}`, { state: { club } })}
                   />
                 ))}
               </div>
@@ -178,7 +179,7 @@ export default function Explore() {
                   <ClubCard
                     key={club.id}
                     club={club}
-                    onClick={() => navigate(`/club/${club.id}`)}
+                    onClick={() => navigate(`/club/${club.id}`, { state: { club } })}
                   />
                 ))}
               </div>

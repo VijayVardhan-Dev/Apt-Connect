@@ -14,6 +14,7 @@ import Profile from "../pages/Profile/Profile";
 import Settings from "../pages/Settings/Settings";
 import CreateClub from "../pages/CreateClub/CreateClub";
 import NotFound from "../pages/NotFound";
+import ClubPage from "../pages/Clubpage/Clubpage";
 
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
@@ -55,6 +56,16 @@ const AppRouter = () => {
             <PrivateRoute>
               <DashboardLayout>
                 <Explore />
+              </DashboardLayout>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/club/:clubId"
+          element={
+            <PrivateRoute>
+              <DashboardLayout>
+                <ClubPage />
               </DashboardLayout>
             </PrivateRoute>
           }
