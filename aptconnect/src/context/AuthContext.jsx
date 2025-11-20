@@ -1,9 +1,10 @@
 // src/context/AuthContext.jsx
-import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
+import { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "../lib/firebase";
 
-const AuthContext = createContext({ user: null, loading: true });
+// Export the context so it can be used by the hook
+export const AuthContext = createContext({ user: null, loading: true });
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -46,6 +47,3 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-export const useAuth = () => {
-  return useContext(AuthContext);
-};

@@ -12,6 +12,7 @@ import Showcase from "../pages/Showcase/Showcase";
 import Chat from "../pages/Chat/Chat";
 import Profile from "../pages/Profile/Profile";
 import Settings from "../pages/Settings/Settings";
+import CreateClub from "../pages/CreateClub/CreateClub";
 import NotFound from "../pages/NotFound";
 import Clubinterface from "../pages/Club/Clubinterface";
 import Navbar from "../components/layout/Navbar";
@@ -95,6 +96,16 @@ const AppRouter = () => {
             <PrivateRoute>
               <DashboardLayout>
                 <Chat />
+              </DashboardLayout>
+            </PrivateRoute>
+          }
+        />
+         <Route
+          path="/create-club"
+          element={
+            <PrivateRoute>
+              <DashboardLayout>
+                <CreateClub/>
               </DashboardLayout>
             </PrivateRoute>
           }
