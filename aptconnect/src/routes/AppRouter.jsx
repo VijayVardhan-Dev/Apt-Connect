@@ -20,7 +20,8 @@ import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import DashboardLayout from "../components/layout/DashboardLayout";
 import PrivateRoute from "./PrivateRoute";
-
+import FeedbackPage from "../pages/Feedback/Feedback";
+import HelpPage from "../pages/Help/Help";
 const AppRouter = () => {
   return (
     <Router>
@@ -46,6 +47,36 @@ const AppRouter = () => {
             <PrivateRoute>
               <DashboardLayout>
                 <Home />
+              </DashboardLayout>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/Clubinterface"
+          element   ={
+            <PrivateRoute>
+              <DashboardLayout>
+                <Clubinterface />
+              </DashboardLayout>
+            </PrivateRoute>
+          }
+        />   
+          <Route
+          path="/feedback"
+          element={
+            <PrivateRoute>
+              <DashboardLayout>
+                <FeedbackPage />
+              </DashboardLayout>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/help"
+          element={
+            <PrivateRoute>
+              <DashboardLayout>
+                <HelpPage />
               </DashboardLayout>
             </PrivateRoute>
           }
