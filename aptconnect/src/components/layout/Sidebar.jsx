@@ -102,12 +102,12 @@ export default function Sidebar({ onClose }) {
   ];
 
   const myClubLinks = [
-    { label: "Ai club", to: "#", icon: clubIcon },
-    { label: "Dance club", to: "#", icon: clubIcon },
-    { label: "Apt gang", to: "#", icon: clubIcon },
-    { label: "Literature", to: "#", icon: clubIcon },
-    { label: "Music club", to: "#", icon: clubIcon },
-    { label: "Art club", to: "#", icon: clubIcon },
+    { label: "Ai club", to: "/Clubinterface", icon: clubIcon },
+    { label: "Dance club", to: "/Clubinterface", icon: clubIcon },
+    { label: "Apt gang", to: "/Clubinterface", icon: clubIcon },
+    { label: "Literature", to: "/Clubinterface", icon: clubIcon },
+    { label: "Music club", to: "/Clubinterface", icon: clubIcon },
+    { label: "Art club", to: "/Clubinterface", icon: clubIcon },
   ];
 
   const utilityLinks = [
