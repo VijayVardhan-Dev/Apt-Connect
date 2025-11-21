@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Phone, Video, Info, ArrowLeft, Send, Paperclip, Image as ImageIcon } from "lucide-react";
-import { subscribeToChatMessages, sendMessage } from "../../lib/chatService";
+import { Phone, Video, Info, ArrowLeft, Send, Paperclip, Image as ImageIcon, MoreVertical } from "lucide-react";
+import { subscribeToChatMessages, sendMessage, clearChatHistory } from "../../lib/chatService";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../lib/firebase";
 
@@ -40,6 +40,7 @@ const Conversation = ({ selectedChat, renderAvatar, isMobileView, onBack, curren
   const [messageText, setMessageText] = useState("");
   const [sending, setSending] = useState(false);
   const [memberProfiles, setMemberProfiles] = useState({});
+  const [showMenu, setShowMenu] = useState(false);
 
   // --- Dynamic Positioning State ---
   const [fixedInputStyle, setFixedInputStyle] = useState({});
@@ -145,6 +146,19 @@ const Conversation = ({ selectedChat, renderAvatar, isMobileView, onBack, curren
     }
   }
 
+  const handleClearChat = async () => {
+    if (!selectedChat) return;
+    if (window.confirm("Are you sure you want to clear the chat history? This cannot be undone.")) {
+      try {
+        await clearChatHistory(selectedChat.id);
+        setShowMenu(false);
+      } catch (error) {
+        console.error("Failed to clear chat", error);
+        alert("Failed to clear chat");
+      }
+    }
+  };
+
   const formatTime = (timestamp) => {
     if (!timestamp) return "";
     const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
@@ -159,7 +173,9 @@ const Conversation = ({ selectedChat, renderAvatar, isMobileView, onBack, curren
     );
 
   const otherUser = selectedChat.otherUser;
-  const chatName = otherUser?.displayName || selectedChat.name || "Chat";
+  const chatName = selectedChat.type === 'group'
+    ? selectedChat.name
+    : (otherUser?.displayName || selectedChat.name || "Chat");
   const chatHandle = otherUser?.email || "Group"; // Using email as handle for now
 
   return (
@@ -189,6 +205,24 @@ const Conversation = ({ selectedChat, renderAvatar, isMobileView, onBack, curren
           <Phone size={22} className="cursor-pointer hover:text-gray-700" />
           <Video size={22} className="cursor-pointer hover:text-gray-700" />
           <Info size={22} className="cursor-pointer hover:text-gray-700" />
+
+          <div className="relative">
+            <MoreVertical
+              size={22}
+              className="cursor-pointer hover:text-gray-700"
+              onClick={() => setShowMenu(!showMenu)}
+            />
+            {showMenu && (
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
+                <button
+                  onClick={handleClearChat}
+                  className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                >
+                  Clear Chat
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 

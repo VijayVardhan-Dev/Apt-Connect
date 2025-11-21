@@ -66,8 +66,9 @@ export default function Chat() {
   // The above effect might run too often. Let's refine.
 
   useEffect(() => {
-    if (location.state?.chatId && chats.length > 0) {
-      const targetChat = chats.find(c => c.id === location.state.chatId);
+    const stateChatId = location.state?.chatId || location.state?.selectedChatId;
+    if (stateChatId && chats.length > 0) {
+      const targetChat = chats.find(c => c.id === stateChatId);
       if (targetChat) {
         setSelectedChat(targetChat);
         if (window.innerWidth <= CHAT_LAYOUT_BREAKPOINT) {
