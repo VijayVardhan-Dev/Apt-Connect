@@ -51,23 +51,14 @@ const AppRouter = () => {
             </PrivateRoute>
           }
         />
-        <Route
-          path="/Clubinterface"
-          element   ={
-            <PrivateRoute>
-              <DashboardLayout>
-                <Clubinterface />
-              </DashboardLayout>
-            </PrivateRoute>
-          }
-        />   
+        
           <Route
           path="/feedback"
           element={
             <PrivateRoute>
               <DashboardLayout>
                 <FeedbackPage />
-              </DashboardLayout>
+               </DashboardLayout>
             </PrivateRoute>
           }
         />

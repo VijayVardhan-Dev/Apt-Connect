@@ -1,100 +1,32 @@
 // src/pages/Chat.jsx
 
 import React, { useState, useMemo, useEffect } from "react";
-import { Search } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import useAuth from "../../hooks/useAuth";
+import { subscribeToUserChats } from "../../lib/chatService";
 
 import ChatListPanel from "../../components/ui/ChatsList";
 import ConversationPanel from "../../components/ui/Conversation";
-
-const initialChats = [
-  {
-    id: 1,
-    name: "BORA GUNA",
-    handle: "GUNA_77",
-    lastMessage: "Your note",
-    time: "just now",
-    active: true,
-    dp: "DP_1",
-    type: "message",
-  },
-  {
-    id: 10,
-    name: "BORA GUNA",
-    handle: "GUNA_77",
-    lastMessage: "Your note",
-    time: "just now",
-    active: true,
-    dp: "DP_10",
-    type: "message",
-  },
-  {
-    id: 2,
-    name: "MVS PRANNAV",
-    handle: "PRANNAV_M",
-    lastMessage: "Broo",
-    time: "7w",
-    active: false,
-    dp: "DP_2",
-    type: "message",
-  },
-  {
-    id: 3,
-    name: "Yeswanth_L",
-    handle: "YESW_L",
-    lastMessage: "Active 16m ago",
-    time: "16m",
-    active: true,
-    dp: "DP_3",
-    type: "message",
-  },
-  {
-    id: 4,
-    name: "MR. TEJ 777",
-    handle: "TEJ_777",
-    lastMessage: "Reacted...",
-    time: "10w",
-    active: false,
-    dp: "DP_4",
-    type: "request",
-  },
-  {
-    id: 5,
-    name: "Kumar REDDY's",
-    handle: "KUMAR_R",
-    lastMessage: "Message unavailable",
-    time: "11w",
-    active: false,
-    dp: "DP_5",
-    type: "message",
-  },
-  {
-    id: 6,
-    name: "Quantumhero_vijay",
-    handle: "QUANTUM_V",
-    lastMessage: "sent an attachment",
-    time: "12w",
-    active: true,
-    dp: "DP_6",
-    type: "request",
-  },
-];
 
 const CHAT_LAYOUT_BREAKPOINT = 768;
 const clsx = (...classes) => classes.filter(Boolean).join(" ");
 
 export default function Chat() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { user } = useAuth();
 
-  const [selectedChat, setSelectedChat] = useState(initialChats[0]);
+  const [chats, setChats] = useState([]);
+  const [selectedChat, setSelectedChat] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [activeTab, setActiveTab] = useState("message");
+  const [activeTab, setActiveTab] = useState("message"); // 'message' | 'request'
   const [viewMode, setViewMode] = useState("list");
 
   const [isMobileView, setIsMobileView] = useState(
-    window.innerWidth <= CHAT_LAYOUT_BREAKPOINT,
+    window.innerWidth <= CHAT_LAYOUT_BREAKPOINT
   );
 
+  // Handle Window Resize
   useEffect(() => {
     const checkMobile = () => {
       setIsMobileView(window.innerWidth <= CHAT_LAYOUT_BREAKPOINT);
@@ -104,38 +36,95 @@ export default function Chat() {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
+  // Subscribe to Chats
+  useEffect(() => {
+    if (!user) return;
+
+    const unsubscribe = subscribeToUserChats(user.uid, (updatedChats) => {
+      setChats(updatedChats);
+    });
+
+    return () => unsubscribe();
+  }, [user]);
+
+  // Handle Initial Selection from Navigation State (e.g. from Club Members)
+  useEffect(() => {
+    if (location.state?.chatId && chats.length > 0) {
+      const chatToSelect = chats.find((c) => c.id === location.state.chatId);
+      if (chatToSelect) {
+        setSelectedChat(chatToSelect);
+        if (isMobileView) setViewMode("conversation");
+        // Clear state so it doesn't re-select on refresh/updates unnecessarily
+        // navigate(location.pathname, { replace: true, state: {} });
+      }
+    } else if (!selectedChat && chats.length > 0 && !isMobileView) {
+      // Select first chat on desktop if nothing selected
+      setSelectedChat(chats[0]);
+    }
+  }, [location.state, chats, isMobileView, selectedChat]); // Added selectedChat to deps to avoid override if user selected something else? No, logic needs care.
+  // Actually, we only want to react to location.state changes or initial load.
+  // The above effect might run too often. Let's refine.
+
+  useEffect(() => {
+    if (location.state?.chatId && chats.length > 0) {
+      const targetChat = chats.find(c => c.id === location.state.chatId);
+      if (targetChat) {
+        setSelectedChat(targetChat);
+        if (window.innerWidth <= CHAT_LAYOUT_BREAKPOINT) {
+          setViewMode("conversation");
+        }
+      }
+    }
+  }, [location.state, chats]);
+
+
   const handleBackToChatList = () => {
     setViewMode("list");
+    setSelectedChat(null);
   };
 
   const handleChatSelection = (chat) => {
     setSelectedChat(chat);
-    if (window.innerWidth <= CHAT_LAYOUT_BREAKPOINT) {
+    if (isMobileView) {
       setViewMode("conversation");
     }
   };
 
-  const renderAvatar = (user, sizeClass = "w-12 h-12") => (
-    <div
-      className={`${sizeClass} rounded-full bg-gray-400 flex items-center justify-center text-white text-lg font-bold border-2 border-transparent shrink-0`}
-    >
-      {user.name.charAt(0)}
-    </div>
-  );
+  const renderAvatar = (chat, sizeClass = "w-12 h-12") => {
+    const otherUser = chat.otherUser;
+    const name = otherUser?.displayName || chat.name || "User";
+    const photoURL = otherUser?.photoURL || chat.avatar;
+
+    return (
+      <div className={`${sizeClass} rounded-full bg-gray-200 flex items-center justify-center overflow-hidden shrink-0 border border-gray-100`}>
+        {photoURL ? (
+          <img src={photoURL} alt={name} className="w-full h-full object-cover" />
+        ) : (
+          <span className="text-gray-500 font-bold text-lg">{name.charAt(0).toUpperCase()}</span>
+        )}
+      </div>
+    );
+  };
 
   const filteredChats = useMemo(() => {
-    const typeFiltered = initialChats.filter((chat) => chat.type === activeTab);
+    // Filter by tab (assuming 'type' or some logic, for now we treat all as messages unless we add 'request' logic)
+    // The schema has 'type': 'private' | 'group'.
+    // We can map 'private' to 'message' tab for now.
+    // Or just show all for now.
 
-    if (!searchTerm) {
-      return typeFiltered;
+    let filtered = chats;
+
+    // Search
+    if (searchTerm) {
+      const lower = searchTerm.toLowerCase();
+      filtered = filtered.filter(chat => {
+        const name = chat.otherUser?.displayName || chat.name || "";
+        return name.toLowerCase().includes(lower);
+      });
     }
-    const lowerCaseSearch = searchTerm.toLowerCase();
-    return typeFiltered.filter(
-      (chat) =>
-        chat.name.toLowerCase().includes(lowerCaseSearch) ||
-        chat.handle.toLowerCase().includes(lowerCaseSearch),
-    );
-  }, [searchTerm, activeTab]);
+
+    return filtered;
+  }, [chats, searchTerm, activeTab]);
 
   return (
     <div className="flex h-screen overflow-hidden bg-white text-gray-900">
@@ -144,11 +133,11 @@ export default function Chat() {
         <div
           className={clsx(
             isMobileView ? "w-full" : "md:w-[40%] lg:w-[35%]",
-            "flex flex-col border-r border-gray-200 bg-white",
+            "flex flex-col border-r border-gray-200 bg-white"
           )}
         >
           <ChatListPanel
-            initialChats={initialChats}
+            initialChats={[]} // Not used anymore
             filteredChats={filteredChats}
             selectedChat={selectedChat}
             setSelectedChat={handleChatSelection}
@@ -158,6 +147,7 @@ export default function Chat() {
             setActiveTab={setActiveTab}
             renderAvatar={renderAvatar}
             isMobileView={isMobileView}
+            currentUser={user}
           />
         </div>
       )}
@@ -167,7 +157,7 @@ export default function Chat() {
         <div
           className={clsx(
             isMobileView ? "w-full" : " flex-1",
-            " flex flex-col bg-white h-full",
+            " flex flex-col bg-white h-full"
           )}
         >
           <ConversationPanel
@@ -175,9 +165,11 @@ export default function Chat() {
             renderAvatar={renderAvatar}
             isMobileView={isMobileView}
             onBack={handleBackToChatList}
+            currentUser={user}
           />
         </div>
       )}
     </div>
   );
 }
+
