@@ -42,8 +42,12 @@ const ClubEvents = ({
                             onClick={() => onJoinChat(chat.id)}
                         >
                             <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600">
-                                    <MessageCircle size={24} />
+                                <div className="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 overflow-hidden border border-indigo-50">
+                                    {chat.avatar ? (
+                                        <img src={chat.avatar} alt={chat.name} className="w-full h-full object-cover" />
+                                    ) : (
+                                        <MessageCircle size={24} />
+                                    )}
                                 </div>
                                 <div>
                                     <h4 className="text-gray-900 font-medium text-lg">

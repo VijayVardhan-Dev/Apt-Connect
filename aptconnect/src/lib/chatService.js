@@ -136,7 +136,11 @@ export const subscribeToUserChats = (userId, callback) => {
                 if (otherUserId) {
                     const userSnap = await getDoc(doc(db, "users", otherUserId));
                     if (userSnap.exists()) {
-                        otherUser = userSnap.data();
+                        otherUser = {
+                            uid: otherUserId,
+                            ...userSnap.data(),
+                            displayName: userSnap.data().displayName || userSnap.data().name
+                        };
                     }
                 }
 
@@ -310,6 +314,46 @@ export const getClubChats = async (clubId) => {
         return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     } catch (error) {
         console.error("Error fetching club chats:", error);
+        throw error;
+    }
+};
+
+/**
+ * Adds a user to a group chat if they are not already a member.
+ */
+export const joinGroupChat = async (chatId, userId) => {
+    try {
+        const chatRef = doc(db, "chats", chatId);
+        const chatSnap = await getDoc(chatRef);
+
+        if (!chatSnap.exists()) {
+            throw new Error("Chat not found");
+        }
+
+        const chatData = chatSnap.data();
+        const members = chatData.members || [];
+
+        if (!members.includes(userId)) {
+            // Add to chat members
+            await updateDoc(chatRef, {
+                members: arrayUnion(userId)
+            });
+
+            // Add to user's chat list
+            const userChatData = {
+                updatedAt: serverTimestamp(),
+                unreadCount: 0,
+                lastMessage: chatData.lastMessage || null,
+                type: "group",
+                name: chatData.name,
+                clubId: chatData.clubId,
+                // Add other necessary fields if needed
+            };
+
+            await setDoc(doc(db, "users", userId, "userChats", chatId), userChatData);
+        }
+    } catch (error) {
+        console.error("Error joining group chat:", error);
         throw error;
     }
 };

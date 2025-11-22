@@ -209,7 +209,7 @@ const Conversation = ({ selectedChat, renderAvatar, isMobileView, onBack, curren
   const otherUser = selectedChat.otherUser;
   const chatName = selectedChat.type === 'group'
     ? selectedChat.name
-    : (otherUser?.displayName || selectedChat.name || "Chat");
+    : (otherUser?.displayName || otherUser?.name || selectedChat.name || "Chat");
   const chatHandle = otherUser?.email || "Group"; // Using email as handle for now
 
   return (

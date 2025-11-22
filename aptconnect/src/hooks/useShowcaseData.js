@@ -7,6 +7,7 @@ import {
   orderBy,
   limit,
   getDocs,
+  getCountFromServer,
   Timestamp,
 } from "firebase/firestore";
 import { db } from "../lib/firebase";
@@ -31,6 +32,7 @@ export const useShowcaseData = () => {
   const [topTrending, setTopTrending] = useState([]);
   const [topClubs, setTopClubs] = useState([]);
   const [topVideos, setTopVideos] = useState([]);
+  const [stats, setStats] = useState({ totalUsers: 0, totalClubs: 0, totalPosts: 0 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -84,18 +86,29 @@ export const useShowcaseData = () => {
           limit(6)
         );
 
+        // Global Stats Queries
+        const qTotalUsers = query(collection(db, "users"));
+        const qTotalClubs = query(collection(db, "clubs"));
+        const qTotalPosts = query(collection(db, "posts"));
+
         const [
           snapTopViewed,
           snapTopLiked,
           snapTrending,
           snapTopClubs,
           snapTopVideos,
+          snapTotalUsers,
+          snapTotalClubs,
+          snapTotalPosts,
         ] = await Promise.all([
           getDocs(qTopViewed),
           getDocs(qTopLiked),
           getDocs(qTrending),
           getDocs(qTopClubs),
           getDocs(qTopVideos),
+          getCountFromServer(qTotalUsers),
+          getCountFromServer(qTotalClubs),
+          getCountFromServer(qTotalPosts),
         ]);
 
         if (!mounted) return;
@@ -104,6 +117,11 @@ export const useShowcaseData = () => {
         setTopTrending(snapTrending.docs.map((d) => ({ id: d.id, ...d.data() })));
         setTopClubs(snapTopClubs.docs.map((d) => ({ id: d.id, ...d.data() })));
         setTopVideos(snapTopVideos.docs.map((d) => ({ id: d.id, ...d.data() })));
+        setStats({
+          totalUsers: snapTotalUsers.data().count,
+          totalClubs: snapTotalClubs.data().count,
+          totalPosts: snapTotalPosts.data().count,
+        });
         setError(null);
       } catch (err) {
         console.error("Showcase load error:", err);
@@ -126,6 +144,7 @@ export const useShowcaseData = () => {
     topTrending,
     topClubs,
     topVideos,
+    stats,
     loading,
     error,
   };

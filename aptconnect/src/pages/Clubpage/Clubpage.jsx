@@ -9,11 +9,11 @@ import {
   increment,
   updateDoc,
 } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+
 import { db, storage } from "../../lib/firebase";
 import useAuth from "../../hooks/useAuth";
 import MembersModal from "../../components/club/MembersModal";
-import { createGroupChat, getClubChats, deleteGroupChat } from "../../lib/chatService";
+import { createGroupChat, getClubChats, deleteGroupChat, joinGroupChat } from "../../lib/chatService";
 import { createPost, getClubPosts, deletePost } from "../../lib/postService";
 
 // Components
@@ -49,7 +49,6 @@ const ClubPage = () => {
   const [clubPosts, setClubPosts] = useState([]);
   const [loadingPosts, setLoadingPosts] = useState(false);
   const [showCreatePost, setShowCreatePost] = useState(false);
-  const [creatingPost, setCreatingPost] = useState(false);
 
   // Derived State
   const membersCount = useMemo(() => {
@@ -226,8 +225,20 @@ const ClubPage = () => {
     }
   };
 
-  const handleJoinChat = (chatId) => {
-    navigate("/chat", { state: { selectedChatId: chatId } });
+  const handleJoinChat = async (chatId) => {
+    if (!user) {
+      alert("Please login to join chat");
+      return;
+    }
+
+    try {
+      // Ensure user is added to the chat group
+      await joinGroupChat(chatId, user.uid);
+      navigate("/chat", { state: { selectedChatId: chatId } });
+    } catch (error) {
+      console.error("Failed to join chat", error);
+      alert("Failed to join chat");
+    }
   };
 
   // Delete Post Logic
@@ -241,49 +252,13 @@ const ClubPage = () => {
   };
 
   // Create Post Logic
-  const handleCreatePost = async ({ title, content, imageURL, videoURL, imageFile, videoFile }) => {
-    if (!club || !user) return;
-
-    setCreatingPost(true);
+  const handlePostCreated = async () => {
+    if (!club) return;
     try {
-      let finalImageURL = imageURL;
-      let finalVideoURL = videoURL;
-
-      // Upload Image if selected
-      if (imageFile) {
-        const imageRef = ref(storage, `posts/images/${Date.now()}_${imageFile.name}`);
-        await uploadBytes(imageRef, imageFile);
-        finalImageURL = await getDownloadURL(imageRef);
-      }
-
-      // Upload Video if selected
-      if (videoFile) {
-        const videoRef = ref(storage, `posts/videos/${Date.now()}_${videoFile.name}`);
-        await uploadBytes(videoRef, videoFile);
-        finalVideoURL = await getDownloadURL(videoRef);
-      }
-
-      const postData = {
-        title,
-        content,
-        imageURL: finalImageURL,
-        videoURL: finalVideoURL,
-        clubId: club.id,
-        authorId: user.uid,
-      };
-
-      await createPost(postData);
-
-      // Refresh list
       const posts = await getClubPosts(club.id);
       setClubPosts(posts);
-
-      setShowCreatePost(false);
     } catch (error) {
-      console.error("Failed to create post", error);
-      alert("Failed to create post");
-    } finally {
-      setCreatingPost(false);
+      console.error("Failed to refresh posts", error);
     }
   };
 
@@ -378,8 +353,9 @@ const ClubPage = () => {
       {showCreatePost && (
         <CreatePostModal
           onClose={() => setShowCreatePost(false)}
-          onSubmit={handleCreatePost}
-          loading={creatingPost}
+          onPostCreated={handlePostCreated}
+          clubId={club.id}
+          currentUser={user}
         />
       )}
     </div>

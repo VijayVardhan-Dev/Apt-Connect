@@ -1,136 +1,190 @@
 import React, { useState } from "react";
-import { X, Loader2, Image as ImageIcon, Video, Upload } from "lucide-react";
+import { createPortal } from "react-dom";
+import { X, Image, Plus, Loader2 } from "lucide-react";
+import { uploadToCloudinary } from "../../lib/upload";
+import { createPost } from "../../lib/postService";
 
-const CreatePostModal = ({ onClose, onSubmit, loading }) => {
-    const [title, setTitle] = useState("");
-    const [content, setContent] = useState("");
-    const [imageURL, setImageURL] = useState("");
-    const [videoURL, setVideoURL] = useState("");
-    const [imageFile, setImageFile] = useState(null);
-    const [videoFile, setVideoFile] = useState(null);
+const CreatePostModal = ({ onClose, onPostCreated, clubId, currentUser }) => {
+    const [postContent, setPostContent] = useState("");
+    const [mediaFile, setMediaFile] = useState(null);
+    const [isPosting, setIsPosting] = useState(false);
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        onSubmit({ title, content, imageURL, videoURL, imageFile, videoFile });
+    // Use current user info or fallback
+    const USER_INFO = {
+        name: currentUser?.displayName || "User",
+        handle: currentUser?.email || "Member",
+        avatarUrl: currentUser?.photoURL || `https://placehold.co/40x40/5C6BC0/FFFFFF?text=${(currentUser?.displayName || "U").charAt(0)}`,
     };
 
-    return (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl w-full max-w-lg p-6 relative animate-in fade-in zoom-in duration-200 max-h-[90vh] overflow-y-auto">
-                <button
-                    onClick={onClose}
-                    className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
-                >
-                    <X size={24} />
-                </button>
+    const handlePost = async (e) => {
+        e.preventDefault();
+        if (postContent.trim().length === 0 && !mediaFile) {
+            alert("Please add content or media to your post.");
+            return;
+        }
 
-                <h3 className="text-xl font-semibold text-gray-900 mb-6">Create Post</h3>
+        setIsPosting(true);
+        try {
+            let imageURL = "";
+            let videoURL = "";
 
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Title
-                        </label>
-                        <input
-                            type="text"
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
-                            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
-                            placeholder="Post Title"
-                            required
-                        />
-                    </div>
+            // Upload Media if exists
+            if (mediaFile) {
+                const url = await uploadToCloudinary(mediaFile);
+                if (mediaFile.type.startsWith("video/")) {
+                    videoURL = url;
+                } else {
+                    imageURL = url;
+                }
+            }
 
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Content
-                        </label>
-                        <textarea
-                            value={content}
-                            onChange={(e) => setContent(e.target.value)}
-                            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none h-32 resize-none"
-                            placeholder="What's on your mind?"
-                            required
-                        />
-                    </div>
+            const postData = {
+                content: postContent,
+                imageURL,
+                videoURL,
+                clubId,
+                authorId: currentUser?.uid,
+                // Title is omitted as per new UI, service handles it or it's optional
+                title: "",
+            };
 
-                    {/* Image Upload */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-2">
-                            <ImageIcon size={16} /> Image
-                        </label>
-                        <div className="flex flex-col gap-2">
-                            <input
-                                type="text"
-                                value={imageURL}
-                                onChange={(e) => setImageURL(e.target.value)}
-                                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
-                                placeholder="Image URL (optional)"
-                            />
-                            <div className="flex items-center gap-2">
-                                <span className="text-xs text-gray-500">OR</span>
-                                <label className="cursor-pointer flex items-center gap-2 px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 transition text-sm text-gray-600">
-                                    <Upload size={16} />
-                                    {imageFile ? "Change File" : "Upload from Computer"}
-                                    <input
-                                        type="file"
-                                        accept="image/*"
-                                        className="hidden"
-                                        onChange={(e) => setImageFile(e.target.files[0])}
-                                    />
-                                </label>
-                                {imageFile && <span className="text-xs text-green-600 truncate max-w-[150px]">{imageFile.name}</span>}
-                            </div>
-                        </div>
-                    </div>
+            await createPost(postData);
 
-                    {/* Video Upload */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-2">
-                            <Video size={16} /> Video
-                        </label>
-                        <div className="flex flex-col gap-2">
-                            <input
-                                type="text"
-                                value={videoURL}
-                                onChange={(e) => setVideoURL(e.target.value)}
-                                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
-                                placeholder="Video URL (optional)"
-                            />
-                            <div className="flex items-center gap-2">
-                                <span className="text-xs text-gray-500">OR</span>
-                                <label className="cursor-pointer flex items-center gap-2 px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 transition text-sm text-gray-600">
-                                    <Upload size={16} />
-                                    {videoFile ? "Change File" : "Upload from Computer"}
-                                    <input
-                                        type="file"
-                                        accept="video/*"
-                                        className="hidden"
-                                        onChange={(e) => setVideoFile(e.target.files[0])}
-                                    />
-                                </label>
-                                {videoFile && <span className="text-xs text-green-600 truncate max-w-[150px]">{videoFile.name}</span>}
-                            </div>
-                        </div>
-                    </div>
+            if (onPostCreated) {
+                onPostCreated(); // Refresh list
+            }
+            onClose();
+        } catch (error) {
+            console.error("Failed to create post", error);
+            alert("Failed to create post. Please try again.");
+        } finally {
+            setIsPosting(false);
+        }
+    };
 
+    const handleMediaChange = (e) => {
+        if (e.target.files && e.target.files[0]) {
+            setMediaFile(e.target.files[0]);
+        }
+    };
+
+    return createPortal(
+        <div
+            className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/30 transition-opacity"
+            onClick={onClose}
+        >
+            {/* Modal Content Box */}
+            <div
+                className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-lg mx-4 p-6 
+                           transform transition-transform duration-300"
+                onClick={(e) => e.stopPropagation()}
+            >
+                {/* Header and Close Button */}
+                <div className="flex justify-between items-center pb-4 border-b border-gray-200 dark:border-gray-700">
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+                        Create Post
+                    </h2>
                     <button
-                        type="submit"
-                        disabled={loading || !title.trim()}
-                        className="w-full bg-indigo-600 text-white py-2.5 rounded-lg font-medium hover:bg-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                        onClick={onClose}
+                        className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 transition"
+                        aria-label="Close post creation"
                     >
-                        {loading ? (
-                            <>
-                                <Loader2 className="w-5 h-5 animate-spin" />
-                                Posting...
-                            </>
-                        ) : (
-                            "Post"
-                        )}
+                        <X size={20} />
                     </button>
+                </div>
+
+                {/* User Info Header (Profile and Name) */}
+                <div className="flex items-center mt-4 mb-4">
+                    <img
+                        src={USER_INFO.avatarUrl}
+                        alt={USER_INFO.name}
+                        className="w-10 h-10 rounded-full mr-3 object-cover"
+                    />
+                    <div>
+                        <p className="font-semibold text-gray-900 dark:text-white">
+                            {USER_INFO.name}
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                            {USER_INFO.handle}
+                        </p>
+                    </div>
+                </div>
+
+                {/* Content Input Area */}
+                <form onSubmit={handlePost}>
+                    <textarea
+                        rows="5"
+                        placeholder="What do you want to talk about?"
+                        value={postContent}
+                        onChange={(e) => setPostContent(e.target.value)}
+                        className="w-full text-lg resize-none border-none focus:outline-none focus:ring-0 placeholder-gray-400 dark:placeholder-gray-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white p-0 mb-4"
+                    />
+
+                    {/* Media Preview/Placeholder */}
+                    {mediaFile && (
+                        <div className="text-sm text-green-600 mb-4 flex items-center justify-between p-2 border border-green-300 rounded-lg bg-green-50">
+                            <span className="truncate max-w-[80%]">{mediaFile.name}</span>
+                            <button
+                                onClick={() => setMediaFile(null)}
+                                type="button"
+                                className="text-red-500 hover:text-red-700"
+                            >
+                                <X size={16} />
+                            </button>
+                        </div>
+                    )}
+
+                    {/* Footer: Media & Post Button */}
+                    <div className="flex justify-between items-center pt-4 border-t border-gray-200 dark:border-gray-700">
+                        {/* Media Upload Icons */}
+                        <div className="flex space-x-4">
+                            <label
+                                htmlFor="media-upload"
+                                className="cursor-pointer text-gray-600 dark:text-gray-400 hover:text-indigo-600 transition"
+                            >
+                                <Image size={24} />
+                                <input
+                                    id="media-upload"
+                                    type="file"
+                                    accept="image/*,video/*"
+                                    onChange={handleMediaChange}
+                                    className="hidden"
+                                />
+                            </label>
+                            {/* Placeholder for other attachments if needed */}
+                            {/* <button
+                type="button"
+                className="text-gray-600 dark:text-gray-400 hover:text-indigo-600 transition"
+              >
+                <Plus size={24} />
+              </button> */}
+                        </div>
+
+                        {/* Post Button */}
+                        <button
+                            type="submit"
+                            disabled={
+                                isPosting || (postContent.trim().length === 0 && !mediaFile)
+                            }
+                            className={`px-6 py-2 text-base font-semibold rounded-full transition duration-300 flex items-center gap-2 ${postContent.trim().length > 0 || mediaFile
+                                    ? "bg-indigo-600 text-white hover:bg-indigo-700"
+                                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                                }`}
+                        >
+                            {isPosting ? (
+                                <>
+                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                    Posting...
+                                </>
+                            ) : (
+                                "Post"
+                            )}
+                        </button>
+                    </div>
                 </form>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 };
 
