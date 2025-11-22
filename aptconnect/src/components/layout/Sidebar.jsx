@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { Plus } from "lucide-react";
 import useAuth from "../../hooks/useAuth";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { db } from "../../lib/firebase";
@@ -223,6 +224,20 @@ export default function Sidebar({ collapsed, bottomBar }) {
               My clubs
             </h3>
             <div className={clsx("space-y-0", isSidebarSmall ? "space-y-2" : "space-y-0")}>
+              {/* Create Club Button */}
+              <button
+                onClick={() => navigate("/create-club")}
+                className={clsx(
+                  "flex items-center text-indigo-600 hover:bg-indigo-50 transition-colors rounded-md mb-2",
+                  isSidebarSmall ? "justify-center w-10 h-10 mx-auto" : "w-full px-3 py-2 space-x-3"
+                )}
+                title="Create a Club"
+              >
+                <div className="flex items-center justify-center w-6 h-6 rounded-full border-2 border-indigo-600">
+                  <Plus size={14} strokeWidth={3} />
+                </div>
+                {!isSidebarSmall && <span className="text-sm font-semibold">Create Club</span>}
+              </button>
               {myClubsLoading && (
                 <div className={clsx(
                   "text-xs text-slate-400",

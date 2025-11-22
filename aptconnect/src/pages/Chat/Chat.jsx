@@ -2,6 +2,8 @@
 
 import React, { useState, useMemo, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../../lib/firebase";
 import useAuth from "../../hooks/useAuth";
 import { subscribeToUserChats } from "../../lib/chatService";
 
@@ -36,12 +38,35 @@ export default function Chat() {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  // Subscribe to Chats
+  // Subscribe to Chats & Fetch Fresh User Data
   useEffect(() => {
     if (!user) return;
 
-    const unsubscribe = subscribeToUserChats(user.uid, (updatedChats) => {
-      setChats(updatedChats);
+    const unsubscribe = subscribeToUserChats(user.uid, async (updatedChats) => {
+      const enrichedChats = await Promise.all(updatedChats.map(async (chat) => {
+        if (chat.type === 'private' && chat.otherUser?.uid) {
+          try {
+            const userRef = doc(db, "users", chat.otherUser.uid);
+            const userSnap = await getDoc(userRef);
+            if (userSnap.exists()) {
+              const userData = userSnap.data();
+              // Merge fresh user data into otherUser object
+              return {
+                ...chat,
+                otherUser: {
+                  ...chat.otherUser,
+                  displayName: userData.displayName || userData.name || chat.otherUser.displayName,
+                  photoURL: userData.photoURL || chat.otherUser.photoURL
+                }
+              };
+            }
+          } catch (e) {
+            console.error("Error fetching user details for chat:", e);
+          }
+        }
+        return chat;
+      }));
+      setChats(enrichedChats);
     });
 
     return () => unsubscribe();
@@ -92,9 +117,17 @@ export default function Chat() {
   };
 
   const renderAvatar = (chat, sizeClass = "w-12 h-12") => {
-    const otherUser = chat.otherUser;
-    const name = otherUser?.displayName || chat.name || "User";
-    const photoURL = otherUser?.photoURL || chat.avatar;
+    let name = "User";
+    let photoURL = null;
+
+    if (chat.type === "group") {
+      name = chat.name || "Group Chat";
+      photoURL = chat.avatar;
+    } else {
+      const otherUser = chat.otherUser;
+      name = otherUser?.displayName || chat.name || "User";
+      photoURL = otherUser?.photoURL || chat.avatar;
+    }
 
     return (
       <div className={`${sizeClass} rounded-full bg-gray-200 flex items-center justify-center overflow-hidden shrink-0 border border-gray-100`}>

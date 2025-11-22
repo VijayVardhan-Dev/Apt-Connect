@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MoreVertical, Trash2, Loader2 } from 'lucide-react';
 import { deletePost } from '../../lib/postService';
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../../lib/firebase";
 
 // Default Icons (Fallbacks)
 import clubDp from "../../assets/images/club_dp.png";
@@ -14,11 +16,16 @@ const Post = ({ post, onLike, onSave, onComment, currentUser, isAdmin, onDelete 
   const [showOptions, setShowOptions] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
+  // Data State
+  const [authorName, setAuthorName] = useState("Club Member");
+  const [authorPhoto, setAuthorPhoto] = useState(clubDp);
+  const [clubName, setClubName] = useState("");
+
   const {
     id = "",
     authorId = "",
-    title = "", // New field
-    content = "", // Mapped to text
+    title = "",
+    content = "",
     createdAt = null,
     imageURL = "",
     videoURL = "",
@@ -27,24 +34,55 @@ const Post = ({ post, onLike, onSave, onComment, currentUser, isAdmin, onDelete 
     views = 0,
     clubId = "",
     // Fallbacks or passed props
-    avatar = clubDp,
     saveIcon: saveIconProp = saveIcon,
     likeIcon: likeIconProp = likeIcon,
     commentIcon: commentIconProp = commentIcon,
     viewsIcon: viewsIconProp = viewsIcon,
   } = post || {};
 
+  // Fetch User and Club Details
+  useEffect(() => {
+    const fetchData = async () => {
+      // Fetch Author
+      if (authorId) {
+        try {
+          const userSnap = await getDoc(doc(db, "users", authorId));
+          if (userSnap.exists()) {
+            const userData = userSnap.data();
+            setAuthorName(userData.name || userData.displayName || "Club Member");
+            setAuthorPhoto(userData.photoURL || clubDp);
+          }
+        } catch (error) {
+          console.error("Error fetching author", error);
+        }
+      }
+
+      // Fetch Club
+      if (clubId) {
+        try {
+          const clubSnap = await getDoc(doc(db, "clubs", clubId));
+          if (clubSnap.exists()) {
+            setClubName(clubSnap.data().name || "");
+          }
+        } catch (error) {
+          console.error("Error fetching club", error);
+        }
+      }
+    };
+
+    fetchData();
+  }, [authorId, clubId]);
+
   // Map dynamic data to UI expectations
   const text = content;
-  const image = imageURL || postImg; // Use placeholder if no image
-  const author = "Club Member"; // Ideally fetch author name, using placeholder for now
+  const image = imageURL || postImg;
 
   // Format time
   const time = createdAt?.toDate
     ? createdAt.toDate().toLocaleDateString() + " " + createdAt.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     : "Just now";
 
-  const hashtags = []; // Extract from text if needed, or add field
+  const hashtags = [];
 
   const isAuthor = currentUser?.uid === authorId;
   const canDelete = isAdmin || isAuthor;
@@ -68,14 +106,15 @@ const Post = ({ post, onLike, onSave, onComment, currentUser, isAdmin, onDelete 
     <>
       <article
         aria-labelledby={`post-${id}-title`}
-        className="overflow-hidden w-full max-w-[640px] mx-auto bg-white rounded-lg border border-gray-100 shadow-sm mb-6"
+        className="overflow-hidden w-full max-w-[640px] mx-auto mb-6"
       >
         <header className="flex items-start gap-3 px-4 py-3">
-          <img src={avatar} alt="author" className="w-10 h-10 rounded-full object-cover" />
+          <img src={authorPhoto} alt="author" className="w-12 h-12 rounded-full object-cover" />
           <div className="flex-1">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-sm font-semibold text-slate-900">{title || author}</div>
+                <div className="text-base font-semibold  text-slate-900">{authorName}</div>
+                {clubName && <div className="text-xs font-medium text-indigo-600">{clubName}</div>}
                 <div className="text-xs text-slate-500">{time}</div>
               </div>
 
@@ -126,14 +165,14 @@ const Post = ({ post, onLike, onSave, onComment, currentUser, isAdmin, onDelete 
               <img
                 src={image}
                 alt="post-media"
-                className="rounded-md object-cover w-full h-auto max-h-[400px]"
+                className="rounded-md w-full h-auto" // Removed object-cover and max-height to show full image
               />
             </div>
           )}
 
           {videoURL && (
             <div className="pb-4 pt-3">
-              <video controls className="rounded-md w-full max-h-[400px]">
+              <video controls className="rounded-md w-full max-h-[500px]">
                 <source src={videoURL} type="video/mp4" />
                 Your browser does not support the video tag.
               </video>

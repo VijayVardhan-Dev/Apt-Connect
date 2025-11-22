@@ -49,21 +49,7 @@ export default function Home() {
       {/* ===== Centered content column (Feed) ===== */}
       <main className="max-w-3xl mx-auto px-4 py-6 space-y-8">
 
-        {/* Create Button */}
-        <div className="w-full flex justify-end -mt-2">
-          <button
-            onClick={handleCreateClick}
-            className={clsx(
-              "flex items-center shadow-md hover:bg-gray-50 transition duration-150",
-              "bg-white text-gray-900 border border-slate-200 rounded-full",
-              "px-4 py-2 space-x-2"
-            )}
-            aria-label="Create new post or club"
-          >
-            <Plus className="w-5 h-5 stroke-2" />
-            <span className="text-base font-semibold">Create</span>
-          </button>
-        </div>
+
 
         {/* Stories Section */}
         <StoryRail />

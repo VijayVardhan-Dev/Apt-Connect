@@ -58,8 +58,8 @@ const ChatsList = ({
           <button
             onClick={() => setActiveTab("message")}
             className={`font-medium transition-colors ${activeTab === "message"
-                ? "text-gray-900 font-semibold border-b-2 border-indigo-600"
-                : "text-gray-500 hover:text-gray-700"
+              ? "text-gray-900 font-semibold border-b-2 border-indigo-600"
+              : "text-gray-500 hover:text-gray-700"
               }`}
           >
             Messages
@@ -67,8 +67,8 @@ const ChatsList = ({
           <button
             onClick={() => setActiveTab("request")}
             className={`font-medium transition-colors ${activeTab === "request"
-                ? "text-gray-900 font-semibold border-b-2 border-indigo-600"
-                : "text-gray-500 hover:text-gray-700"
+              ? "text-gray-900 font-semibold border-b-2 border-indigo-600"
+              : "text-gray-500 hover:text-gray-700"
               }`}
           >
             Requests
@@ -81,7 +81,7 @@ const ChatsList = ({
         {filteredChats.length > 0 ? (
           filteredChats.map((chat) => {
             const otherUser = chat.otherUser;
-            const name = otherUser?.displayName || chat.name || "User";
+            const name = otherUser?.displayName || otherUser?.name || chat.name || "User";
             const lastMsgText = chat.lastMessage?.text || "No messages yet";
             const time = formatTime(chat.lastMessage?.timestamp || chat.updatedAt);
             const isSelected = selectedChat?.id === chat.id;

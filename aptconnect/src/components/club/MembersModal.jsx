@@ -101,7 +101,7 @@ export default function MembersModal({ memberIds, onClose }) {
                                             )}
                                         </div>
                                         <div>
-                                            <p className="font-medium text-slate-900">{member.displayName || "Unknown User"}</p>
+                                            <p className="font-medium text-slate-900">{member.displayName || member.name || "Unknown User"}</p>
                                             <p className="text-xs text-slate-500">{member.email}</p>
                                         </div>
                                     </div>
