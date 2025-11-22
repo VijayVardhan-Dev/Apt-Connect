@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Phone, Video, Info, ArrowLeft, Send, Paperclip, Image as ImageIcon, MoreVertical } from "lucide-react";
-import { subscribeToChatMessages, sendMessage, clearChatHistory } from "../../lib/chatService";
+import { subscribeToChatMessages, sendMessage, clearChatHistory, deleteChatFromList } from "../../lib/chatService";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../lib/firebase";
 
@@ -49,6 +49,9 @@ const Conversation = ({ selectedChat, renderAvatar, isMobileView, onBack, curren
 
   // Breakpoints for sidebar visibility
   const DESKTOP_SPLIT_BREAKPOINT = 768;
+  const BOTTOM_BAR_BREAKPOINT = 700;
+
+  const [hasBottomBar, setHasBottomBar] = useState(false);
 
   useEffect(() => {
     const updateFixedPosition = () => {
@@ -56,6 +59,9 @@ const Conversation = ({ selectedChat, renderAvatar, isMobileView, onBack, curren
         const rect = conversationRef.current.getBoundingClientRect();
         const width = window.innerWidth;
         const IS_SPLIT_VIEW = width > DESKTOP_SPLIT_BREAKPOINT;
+        const showBottomBar = width <= BOTTOM_BAR_BREAKPOINT;
+
+        setHasBottomBar(showBottomBar);
 
         if (IS_SPLIT_VIEW) {
           setFixedInputStyle({
@@ -66,13 +72,27 @@ const Conversation = ({ selectedChat, renderAvatar, isMobileView, onBack, curren
             zIndex: 20,
           });
         } else {
-          setFixedInputStyle({
-            width: "100%",
-            left: "0",
-            bottom: "0", // Changed to 0 for better mobile exp, might need adjustment if bottom nav exists
-            position: "fixed",
-            zIndex: 20,
-          });
+          // Mobile View (<= 768px)
+          if (showBottomBar) {
+            // <= 700px: Bottom bar visible, Sidebar hidden
+            setFixedInputStyle({
+              width: "100%",
+              left: "0",
+              bottom: "64px",
+              position: "fixed",
+              zIndex: 20,
+            });
+          } else {
+            // 700px < width <= 768px: Sidebar visible (collapsed), Bottom bar hidden
+            // Sidebar width is w-20 (5rem = 80px)
+            setFixedInputStyle({
+              width: "calc(100% - 80px)",
+              left: "80px",
+              bottom: "0",
+              position: "fixed",
+              zIndex: 20,
+            });
+          }
         }
       }
     };
@@ -159,6 +179,20 @@ const Conversation = ({ selectedChat, renderAvatar, isMobileView, onBack, curren
     }
   };
 
+  const handleDeleteChat = async () => {
+    if (!selectedChat || !currentUser) return;
+    if (window.confirm("Are you sure you want to delete this chat from your list?")) {
+      try {
+        await deleteChatFromList(currentUser.uid, selectedChat.id);
+        setShowMenu(false);
+        if (onBack) onBack(); // Go back to list
+      } catch (error) {
+        console.error("Failed to delete chat", error);
+        alert("Failed to delete chat");
+      }
+    }
+  };
+
   const formatTime = (timestamp) => {
     if (!timestamp) return "";
     const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
@@ -218,7 +252,13 @@ const Conversation = ({ selectedChat, renderAvatar, isMobileView, onBack, curren
                   onClick={handleClearChat}
                   className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
                 >
-                  Clear Chat
+                  Clear Chat History
+                </button>
+                <button
+                  onClick={handleDeleteChat}
+                  className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                >
+                  Delete Chat
                 </button>
               </div>
             )}
@@ -228,7 +268,7 @@ const Conversation = ({ selectedChat, renderAvatar, isMobileView, onBack, curren
 
       {/* Chat Bubbles Area */}
       <div
-        className={`flex-1 overflow-y-auto p-4 space-y-4 ${isMobileView ? "pb-24" : "pb-20"
+        className={`flex-1 overflow-y-auto p-4 space-y-4 ${hasBottomBar ? "pb-40" : (isMobileView ? "pb-24" : "pb-20")
           }`}
       >
         {messages.map((msg) => {

@@ -244,6 +244,56 @@ export const deleteGroupChat = async (chatId) => {
 };
 
 /**
+ * Clears all messages in a chat.
+ */
+export const clearChatHistory = async (chatId) => {
+    try {
+        const messagesRef = collection(db, "chats", chatId, "messages");
+        const snapshot = await getDocs(messagesRef);
+
+        const deletePromises = snapshot.docs.map(doc => deleteDoc(doc.ref));
+        await Promise.all(deletePromises);
+
+        const chatRef = doc(db, "chats", chatId);
+        await updateDoc(chatRef, {
+            lastMessage: null
+        });
+
+        const chatSnap = await getDoc(chatRef);
+        if (chatSnap.exists()) {
+            const members = chatSnap.data().members;
+
+            const updatePromises = members.map(memberId => {
+                const userChatRef = doc(db, "users", memberId, "userChats", chatId);
+                return updateDoc(userChatRef, {
+                    lastMessage: null,
+                    unreadCount: 0,
+                    updatedAt: serverTimestamp()
+                });
+            });
+
+            await Promise.all(updatePromises);
+        }
+    } catch (error) {
+        console.error("Error clearing chat history:", error);
+        throw error;
+    }
+};
+
+/**
+ * Deletes a chat from the user's chat list.
+ */
+export const deleteChatFromList = async (userId, chatId) => {
+    try {
+        const userChatRef = doc(db, "users", userId, "userChats", chatId);
+        await deleteDoc(userChatRef);
+    } catch (error) {
+        console.error("Error deleting chat from list:", error);
+        throw error;
+    }
+};
+
+/**
  * Gets all group chats for a specific club.
  */
 export const getClubChats = async (clubId) => {
