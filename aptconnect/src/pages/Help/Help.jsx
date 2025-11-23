@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { ArrowLeft, ChevronDown, Code, Database, User } from "lucide-react";
+import { ChevronDown, Code, User } from "lucide-react";
 
-// FAQ Data structure
+// FAQ Data structure (Unchanged)
 const FAQ_SECTIONS = [
   {
-    category: "Getting Started (General)",
+    category: "Getting Started",
     icon: User,
     questions: [
       {
@@ -22,7 +22,7 @@ const FAQ_SECTIONS = [
     ],
   },
   {
-    category: "Technical Stack (Advanced)",
+    category: "Technical Stack",
     icon: Code,
     questions: [
       {
@@ -44,76 +44,83 @@ const FAQ_SECTIONS = [
 export default function HelpPage() {
   const [openSection, setOpenSection] = useState(null);
 
-  const toggleSection = (index) => {
-    setOpenSection((prevIndex) => (prevIndex === index ? null : index));
+  const toggleSection = (id) => {
+    setOpenSection((prevId) => (prevId === id ? null : id));
   };
 
   return (
-    <div className="min-h-screen bg-white py-8 text-gray-900">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6">
-        {/* Header */}
-        <div className="flex items-center mb-10 border-b border-gray-100 pb-4">
-          {/* ArrowLeft is kept here if this page is navigable via router.goBack() */}
-          <h2 className="text-3xl font-extrabold ml-2">Help Center & FAQ</h2>
-        </div>
+    <div className="min-h-screen bg-white text-gray-900 font-sans">
+      <div className="max-w-2xl mx-auto px-6 pt-12">
+        
+        {/* Minimal Header */}
+        <header className="mb-12">
+          <h1 className="text-2xl font-semibold tracking-tight text-black">
+            Help Center
+          </h1>
+          <p className="text-sm text-gray-500 mt-2">
+            Frequently asked questions and support.
+          </p>
+        </header>
 
-        {FAQ_SECTIONS.map((section, sectionIndex) => (
-          <div
-            key={section.category}
-            className="mb-8 p-4 bg-gray-50 rounded-lg shadow-md"
-          >
-            {/* Category Header */}
-            <h3 className="flex items-center text-xl font-bold mb-4 text-indigo-700">
-              <section.icon size={24} className="mr-3 fill-indigo-600" />
-              {section.category}
-            </h3>
+        {/* FAQ Sections */}
+        <div className="space-y-12">
+          {FAQ_SECTIONS.map((section, sectionIndex) => (
+            <div key={section.category}>
+              
+              {/* Section Title - Minimal & Uppercase */}
+              <div className="flex items-center gap-2 mb-4 border-b border-gray-100 pb-2">
+                <section.icon size={16} className="text-gray-400" />
+                <h3 className="text-xs font-bold uppercase tracking-widest text-gray-400">
+                  {section.category}
+                </h3>
+              </div>
 
-            {/* Accordion List */}
-            <div className="border border-gray-200 rounded-lg overflow-hidden">
-              {section.questions.map((item, itemIndex) => {
-                const isOpen = openSection === `${sectionIndex}-${itemIndex}`;
-                return (
-                  <div
-                    key={itemIndex}
-                    className="border-b border-gray-200 last:border-b-0"
-                  >
-                    <button
-                      className="w-full flex justify-between items-center p-4 text-left font-medium hover:bg-gray-100 transition"
-                      onClick={() =>
-                        toggleSection(
-                          isOpen ? null : `${sectionIndex}-${itemIndex}`,
-                        )
-                      }
-                      aria-expanded={isOpen}
-                    >
-                      <span className="text-gray-900">{item.q}</span>
-                      <ChevronDown
-                        size={18}
-                        className={`text-gray-500 transform transition-transform duration-300 ${
-                          isOpen ? "rotate-180" : "rotate-0"
-                        }`}
-                      />
-                    </button>
+              {/* Questions List */}
+              <div>
+                {section.questions.map((item, itemIndex) => {
+                  const uniqueId = `${sectionIndex}-${itemIndex}`;
+                  const isOpen = openSection === uniqueId;
 
-                    {/* Answer Dropdown */}
+                  return (
                     <div
-                      className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                        isOpen ? "max-h-96" : "max-h-0"
-                      }`}
-                      style={
-                        isOpen ? { maxHeight: "500px" } : { maxHeight: "0" }
-                      }
+                      key={itemIndex}
+                      className="border-b border-gray-100 last:border-0"
                     >
-                      <p className="p-4 pt-0 text-sm text-gray-600 border-t border-gray-200/50">
-                        {item.a}
-                      </p>
+                      <button
+                        onClick={() => toggleSection(uniqueId)}
+                        className="w-full flex justify-between items-start py-4 text-left group"
+                        aria-expanded={isOpen}
+                      >
+                        <span className={`text-sm font-medium transition-colors duration-200 ${isOpen ? "text-black" : "text-gray-700 group-hover:text-black"}`}>
+                          {item.q}
+                        </span>
+                        <span className="ml-4 mt-1">
+                          <ChevronDown
+                            size={14}
+                            className={`text-gray-400 transition-transform duration-300 ${
+                              isOpen ? "rotate-180 text-black" : ""
+                            }`}
+                          />
+                        </span>
+                      </button>
+
+                      {/* Answer Dropdown */}
+                      <div
+                        className={`overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1.0)] ${
+                          isOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
+                        }`}
+                      >
+                        <p className="pb-6 text-sm leading-relaxed text-gray-500 max-w-prose">
+                          {item.a}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );

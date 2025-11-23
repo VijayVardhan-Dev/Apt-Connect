@@ -1,8 +1,5 @@
 import React, { useState } from "react";
-import { Star, Send } from "lucide-react";
-
-// Helper for conditional classes
-const clsx = (...classes) => classes.filter(Boolean).join(" ");
+import { Star, ArrowRight } from "lucide-react";
 
 export default function FeedbackPage() {
   const [rating, setRating] = useState(0);
@@ -12,14 +9,10 @@ export default function FeedbackPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (rating === 0 || comments.trim() === "") {
-      alert("Please provide a rating and comments.");
-      return;
-    }
+    if (rating === 0 || comments.trim() === "") return;
 
-    console.log("Feedback Submitted:", { rating, category, comments });
+    // Simulate submit
     setIsSubmitted(true);
-    // Reset form after a brief delay for UX
     setTimeout(() => {
       setRating(0);
       setCategory("");
@@ -28,117 +21,127 @@ export default function FeedbackPage() {
     }, 3000);
   };
 
-  const handleRatingClick = (newRating) => {
-    setRating(newRating);
-  };
-
-  const getStarColor = (starIndex) => {
-    return starIndex <= rating ? "text-yellow-400" : "text-gray-300";
-  };
-
   return (
-    <div className="min-h-screen bg-white py-8 text-gray-900">
-      <div className="max-w-2xl mx-auto px-4 sm:px-6">
-        {/* Header */}
-        <div className="flex items-center mb-8 border-b border-gray-100 pb-4">
-          <h2 className="text-2xl font-poppins ml-4">Provide Feedback</h2>
-        </div>
+    <div className="min-h-screen bg-white text-gray-900 font-sans">
+      <div className="max-w-2xl mx-auto px-6 pt-12">
+        
+        {/* Minimal Header */}
+        <header className="mb-12">
+          <h1 className="text-2xl font-semibold tracking-tight text-black">
+            Feedback
+          </h1>
+          <p className="text-sm text-gray-500 mt-2">
+            We value your input. Let us know how we can improve.
+          </p>
+        </header>
 
-        {isSubmitted && (
-          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-6">
-            Thank you! Your feedback has been successfully submitted.
+        {isSubmitted ? (
+          <div className="py-4 text-sm font-medium text-black border-l-2 border-black pl-4 animate-in fade-in slide-in-from-left-1 duration-300">
+            Thanks for your feedback. We've received it.
           </div>
-        )}
-
-        <form
-          onSubmit={handleSubmit}
-          className="space-y-8 bg-gray-50 p-6 rounded-xl shadow-lg"
-        >
-          {/* Section 1: Rating */}
-          <div>
-            <h3 className="text-lg font-semibold mb-3 text-gray-700">
-              1. Rate Your Experience
-            </h3>
-            <div className="flex justify-start space-x-1">
-              {[1, 2, 3, 4, 5].map((starIndex) => (
-                <Star
-                  key={starIndex}
-                  size={30}
-                  className={clsx(
-                    "cursor-pointer transition-colors duration-150",
-                    getStarColor(starIndex),
-                    rating >= starIndex ? "fill-yellow-400" : "fill-gray-200",
-                  )}
-                  onClick={() => handleRatingClick(starIndex)}
-                />
-              ))}
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-10">
+            
+            {/* Rating Section */}
+            <div className="space-y-3">
+              <label className="block text-xs font-bold uppercase tracking-widest text-gray-400">
+                Rating
+              </label>
+              <div className="flex items-center gap-2">
+                {[1, 2, 3, 4, 5].map((starIndex) => (
+                  <button
+                    key={starIndex}
+                    type="button"
+                    onClick={() => setRating(starIndex)}
+                    className="focus:outline-none group transition-transform active:scale-95"
+                  >
+                    <Star
+                      size={24}
+                      strokeWidth={1.5}
+                      className={`transition-all duration-200 ${
+                        starIndex <= rating
+                          ? "fill-black text-black"
+                          : "fill-transparent text-gray-300 group-hover:text-gray-500"
+                      }`}
+                    />
+                  </button>
+                ))}
+              </div>
+              <p className="text-xs text-gray-400 h-4">
+                {rating > 0 && `${rating} out of 5 stars`}
+              </p>
             </div>
-            <p className="text-sm text-gray-500 mt-2">
-              {rating > 0
-                ? `You rated: ${rating} Stars`
-                : "Click a star to rate"}
-            </p>
-          </div>
 
-          {/* Section 2: Category */}
-          <div>
-            <label
-              htmlFor="category"
-              className="block text-lg font-semibold mb-3 text-gray-700"
-            >
-              2. Choose Category (Optional)
-            </label>
-            <select
-              id="category"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-indigo-500 focus:border-indigo-500 bg-white"
-            >
-              <option value="" disabled>
-                Select a relevant topic
-              </option>
-              <option value="ui_ux">UI/UX Design</option>
-              <option value="performance">Performance/Speed</option>
-              <option value="bug_report">Bug Report</option>
-              <option value="feature_request">Feature Request</option>
-              <option value="other">Other</option>
-            </select>
-          </div>
+            {/* Category Section */}
+            <div className="space-y-3">
+              <label 
+                htmlFor="category" 
+                className="block text-xs font-bold uppercase tracking-widest text-gray-400"
+              >
+                Category
+              </label>
+              <div className="relative">
+                <select
+                  id="category"
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  className="w-full appearance-none bg-transparent border-b border-gray-200 py-3 pr-8 text-sm text-black focus:outline-none focus:border-black rounded-none cursor-pointer"
+                >
+                  <option value="" disabled>Select a topic</option>
+                  <option value="ui_ux">Design & UX</option>
+                  <option value="performance">Performance</option>
+                  <option value="bug_report">Bug Report</option>
+                  <option value="feature_request">Feature Request</option>
+                  <option value="other">Other</option>
+                </select>
+                {/* Custom arrow for consistent minimal look */}
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
+                   <span className="text-xs">▼</span>
+                </div>
+              </div>
+            </div>
 
-          {/* Section 3: Comments */}
-          <div>
-            <label
-              htmlFor="comments"
-              className="block text-lg font-semibold mb-3 text-gray-700"
-            >
-              3. Your Detailed Comments
-            </label>
-            <textarea
-              id="comments"
-              rows="5"
-              value={comments}
-              onChange={(e) => setComments(e.target.value)}
-              placeholder="Tell us what you liked or what needs improvement..."
-              required
-              className="w-full border border-gray-300 rounded-lg p-3 text-sm resize-none focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-400"
-            ></textarea>
-          </div>
+            {/* Comments Section */}
+            <div className="space-y-3">
+              <label 
+                htmlFor="comments" 
+                className="block text-xs font-bold uppercase tracking-widest text-gray-400"
+              >
+                Comments
+              </label>
+              <textarea
+                id="comments"
+                rows="4"
+                value={comments}
+                onChange={(e) => setComments(e.target.value)}
+                placeholder="Tell us about your experience..."
+                className="w-full bg-transparent border border-gray-200 p-4 text-sm text-black placeholder:text-gray-300 focus:outline-none focus:border-black transition-colors resize-none rounded-sm"
+              />
+            </div>
 
-          {/* Submit Button */}
-          <button
-            type="submit"
-            className={clsx(
-              "w-full flex items-center justify-center py-3 text-lg font-semibold rounded-lg transition duration-200",
-              rating > 0 && comments.trim() !== ""
-                ? "bg-indigo-600 text-white hover:bg-indigo-700 shadow-md"
-                : "bg-gray-300 text-gray-500 cursor-not-allowed",
-            )}
-            disabled={rating === 0 || comments.trim() === ""}
-          >
-            <Send size={20} className="mr-3" />
-            Submit Feedback
-          </button>
-        </form>
+            {/* Minimal Submit Button */}
+            <div className="pt-2">
+              <button
+                type="submit"
+                disabled={rating === 0 || comments.trim() === ""}
+                className={`
+                  flex items-center gap-2 px-6 py-3 text-sm font-medium transition-all duration-200
+                  ${
+                    rating > 0 && comments.trim() !== ""
+                      ? "bg-black text-white hover:bg-gray-800"
+                      : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                  }
+                `}
+              >
+                Submit Feedback
+                {rating > 0 && comments.trim() !== "" && (
+                  <ArrowRight size={16} />
+                )}
+              </button>
+            </div>
+
+          </form>
+        )}
       </div>
     </div>
   );
