@@ -61,7 +61,12 @@ export const createOrGetDirectChat = async (currentUserId, otherUserId) => {
 /**
  * Sends a message to a chat and updates last message/unread counts.
  */
-export const sendMessage = async (chatId, senderId, text, mediaUrl = null, mediaType = null) => {
+import { createNotification, NOTIFICATION_TYPES } from "./notificationService";
+
+/**
+ * Sends a message to a chat and updates last message/unread counts.
+ */
+export const sendMessage = async (chatId, senderId, text, mediaUrl = null, mediaType = null, senderProfile = null) => {
     try {
         const messagesRef = collection(db, "chats", chatId, "messages");
 
@@ -103,6 +108,26 @@ export const sendMessage = async (chatId, senderId, text, mediaUrl = null, media
                 // Increment unread count for everyone except sender
                 if (memberId !== senderId) {
                     updateData.unreadCount = increment(1);
+
+                    // Trigger Notification
+                    if (senderProfile) {
+                        try {
+                            await createNotification(memberId, {
+                                type: NOTIFICATION_TYPES.MESSAGE,
+                                source: {
+                                    id: senderId,
+                                    name: senderProfile.displayName || senderProfile.name || "User",
+                                    photoURL: senderProfile.photoURL
+                                },
+                                content: "sent you a message.",
+                                link: "/chat",
+                                chatId: chatId // Pass chatId
+                            });
+                        } catch (notifError) {
+                            console.error("Failed to send notification", notifError);
+                            // Don't block message sending
+                        }
+                    }
                 }
 
                 // Use setDoc with merge to ensure it exists

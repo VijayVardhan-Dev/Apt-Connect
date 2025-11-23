@@ -7,9 +7,9 @@ import ClubCard from "../../components/ui/ClubCard";
 import { Loader2 } from "lucide-react";
 
 const categories = [
-  "Dance",
+  "Reading",
   "Music",
-  "Robotics",
+  "Technical",
   "Design",
   "Photography",
   "Sports",

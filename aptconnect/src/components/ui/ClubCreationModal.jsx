@@ -192,10 +192,16 @@ const ClubCreationModal = ({ isOpen, onClose }) => {
                             onChange={(e) => handleCategoryChange(e.target.value)} // Use custom handler
                           >
                             <option value="" disabled>Select a Category</option>
+                            <option value="reading">Reading</option>
+                            <option value="music">Music</option>
+                            <option value="design">Design</option>  
+                            <option value="photography">Photography</option>
                             <option value="sports">Sports</option>
                             <option value="technical">Technical</option>
+                            <option value="coding">Coding</option>
                             <option value="arts">Arts</option>
                             <option value="cultural">Cultural</option>
+                            <option value="volunteer">Volunteer</option>
                             <option value="other">Others...</option> {/* ADDED OPTION */}
                           </select>
                       ) : (
