@@ -93,7 +93,13 @@ export default function MembersModal({ memberIds, onClose }) {
                             {members.map((member) => (
                                 <li key={member.id} className="flex items-center justify-between p-3 hover:bg-slate-50 rounded-lg transition group">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 shrink-0 overflow-hidden">
+                                        <div
+                                            className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 shrink-0 overflow-hidden cursor-pointer hover:opacity-80 transition"
+                                            onClick={() => {
+                                                onClose();
+                                                navigate(`/profile/${member.id}`);
+                                            }}
+                                        >
                                             {member.photoURL ? (
                                                 <img src={member.photoURL} alt={member.displayName} className="w-full h-full object-cover" />
                                             ) : (
@@ -101,7 +107,15 @@ export default function MembersModal({ memberIds, onClose }) {
                                             )}
                                         </div>
                                         <div>
-                                            <p className="font-medium text-slate-900">{member.displayName || member.name || "Unknown User"}</p>
+                                            <p
+                                                className="font-medium text-slate-900 cursor-pointer hover:text-indigo-600 transition"
+                                                onClick={() => {
+                                                    onClose();
+                                                    navigate(`/profile/${member.id}`);
+                                                }}
+                                            >
+                                                {member.displayName || member.name || "Unknown User"}
+                                            </p>
                                             <p className="text-xs text-slate-500">{member.email}</p>
                                         </div>
                                     </div>

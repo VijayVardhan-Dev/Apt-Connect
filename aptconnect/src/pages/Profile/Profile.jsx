@@ -19,7 +19,7 @@ import { doc, getDoc, setDoc, collection, query, where, getDocs } from "firebase
 import { db } from "../../lib/firebase";
 import useAuth from "../../hooks/useAuth";
 import { handleUpload } from "../../lib/upload";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const clsx = (...classes) => classes.filter(Boolean).join(" ");
 
@@ -28,6 +28,10 @@ const TABS = ["Clubs", "About", "Skills"];
 const ProfilePage = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { userId } = useParams();
+  const isOwnProfile = !userId || userId === user?.uid;
+  const targetUid = userId || user?.uid;
+
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("Clubs");
@@ -49,9 +53,9 @@ const ProfilePage = () => {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      if (user?.uid) {
+      if (targetUid) {
         try {
-          const docRef = doc(db, "users", user.uid);
+          const docRef = doc(db, "users", targetUid);
           const docSnap = await getDoc(docRef);
           if (docSnap.exists()) {
             const data = docSnap.data();
@@ -63,9 +67,9 @@ const ProfilePage = () => {
             });
           } else {
             const initialData = {
-              name: user.displayName || "User",
-              email: user.email,
-              photoURL: user.photoURL,
+              name: "User",
+              email: "",
+              photoURL: "",
               title: "Member",
               location: "Not specified",
               bio: "",
@@ -91,15 +95,15 @@ const ProfilePage = () => {
     };
 
     fetchUserData();
-  }, [user]);
+  }, [user, targetUid]);
 
   // Fetch Clubs when "Clubs" tab is active
   useEffect(() => {
-    if (activeTab === "Clubs" && user?.uid) {
+    if (activeTab === "Clubs" && targetUid) {
       const fetchClubs = async () => {
         setLoadingClubs(true);
         try {
-          const q = query(collection(db, "clubs"), where("members", "array-contains", user.uid));
+          const q = query(collection(db, "clubs"), where("members", "array-contains", targetUid));
           const snapshot = await getDocs(q);
           const clubs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
           setUserClubs(clubs);
@@ -111,7 +115,7 @@ const ProfilePage = () => {
       };
       fetchClubs();
     }
-  }, [activeTab, user]);
+  }, [activeTab, targetUid]);
 
   const handleEditChange = (field, value, section = null) => {
     if (section) {
@@ -389,12 +393,14 @@ const ProfilePage = () => {
               </div>
 
               <div className="flex items-center gap-3">
-                <button
-                  onClick={() => setIsEditing(true)}
-                  className="px-5 py-2 bg-gray-900 text-white rounded-full font-medium text-sm hover:bg-gray-800 transition shadow-lg shadow-gray-200"
-                >
-                  Edit Profile
-                </button>
+                {isOwnProfile && (
+                  <button
+                    onClick={() => setIsEditing(true)}
+                    className="px-5 py-2 bg-gray-900 text-white rounded-full font-medium text-sm hover:bg-gray-800 transition shadow-lg shadow-gray-200"
+                  >
+                    Edit Profile
+                  </button>
+                )}
               </div>
             </div>
 

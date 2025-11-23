@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { MoreVertical, Trash2, Loader2 } from 'lucide-react';
 import { deletePost } from '../../lib/postService';
 import { doc, getDoc } from "firebase/firestore";
@@ -13,6 +14,7 @@ import saveIcon from "../../assets/icons/save_icon.png";
 import commentIcon from "../../assets/icons/comment_icon.png";
 
 const Post = ({ post, onLike, onSave, onComment, currentUser, isAdmin, onDelete }) => {
+  const navigate = useNavigate();
   const [showOptions, setShowOptions] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
@@ -109,11 +111,21 @@ const Post = ({ post, onLike, onSave, onComment, currentUser, isAdmin, onDelete 
         className="overflow-hidden w-full max-w-[640px] mx-auto mb-6"
       >
         <header className="flex items-start gap-3 px-4 py-3">
-          <img src={authorPhoto} alt="author" className="w-12 h-12 rounded-full object-cover" />
+          <img
+            src={authorPhoto}
+            alt="author"
+            className="w-12 h-12 rounded-full object-cover cursor-pointer hover:opacity-80 transition"
+            onClick={() => navigate(`/profile/${authorId}`)}
+          />
           <div className="flex-1">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-base font-semibold  text-slate-900">{authorName}</div>
+                <div
+                  className="text-base font-semibold text-slate-900 cursor-pointer hover:underline"
+                  onClick={() => navigate(`/profile/${authorId}`)}
+                >
+                  {authorName}
+                </div>
                 {clubName && <div className="text-xs font-medium text-indigo-600">{clubName}</div>}
                 <div className="text-xs text-slate-500">{time}</div>
               </div>

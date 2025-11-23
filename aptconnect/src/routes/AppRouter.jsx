@@ -51,14 +51,14 @@ const AppRouter = () => {
             </PrivateRoute>
           }
         />
-        
-          <Route
+
+        <Route
           path="/feedback"
           element={
             <PrivateRoute>
               <DashboardLayout>
                 <FeedbackPage />
-               </DashboardLayout>
+              </DashboardLayout>
             </PrivateRoute>
           }
         />
@@ -102,12 +102,12 @@ const AppRouter = () => {
             </PrivateRoute>
           }
         />
-         <Route
+        <Route
           path="/create-club"
           element={
             <PrivateRoute>
               <DashboardLayout>
-                <CreateClub/>
+                <CreateClub />
               </DashboardLayout>
             </PrivateRoute>
           }
@@ -134,6 +134,16 @@ const AppRouter = () => {
         />
         <Route
           path="/profile"
+          element={
+            <PrivateRoute>
+              <DashboardLayout>
+                <Profile />
+              </DashboardLayout>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/profile/:userId"
           element={
             <PrivateRoute>
               <DashboardLayout>

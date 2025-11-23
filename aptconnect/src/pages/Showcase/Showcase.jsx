@@ -50,9 +50,9 @@ const Showcase = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="flex overflow-x-auto gap-4 pb-4 -mx-4 px-4 scrollbar-hide snap-x md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-8 md:overflow-visible md:pb-0 md:px-0">
             {topTrending.slice(0, 6).map((item) => (
-              <div key={item.id} className="h-[420px]">
+              <div key={item.id} className="flex-none w-[280px] h-[350px] snap-center md:w-auto md:h-[350px]">
                 <ShowcaseCard item={item} type="post" />
               </div>
             ))}
@@ -72,9 +72,9 @@ const Showcase = () => {
               </div>
             </div>
 
-            <div className="flex overflow-x-auto gap-8 pb-8 -mx-4 px-4 scrollbar-hide snap-x">
+            <div className="flex overflow-x-auto gap-6 pb-8 -mx-4 px-4 scrollbar-hide snap-x">
               {topLiked.map((item) => (
-                <div key={item.id} className="flex-none w-[350px] h-[450px] snap-center">
+                <div key={item.id} className="flex-none w-[280px] h-[380px] snap-center">
                   <ShowcaseCard item={item} type="post" />
                 </div>
               ))}
@@ -94,9 +94,9 @@ const Showcase = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="flex overflow-x-auto gap-4 pb-4 -mx-4 px-4 scrollbar-hide snap-x md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-8 md:overflow-visible md:pb-0 md:px-0">
             {topClubs.slice(0, 3).map((item) => (
-              <div key={item.id} className="h-[420px]">
+              <div key={item.id} className="flex-none w-[280px] h-[350px] snap-center md:w-auto md:h-[350px]">
                 <ShowcaseCard item={item} type="club" />
               </div>
             ))}

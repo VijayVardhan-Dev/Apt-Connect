@@ -86,7 +86,7 @@ export default function Explore() {
             className="w-6 h-5 cursor-pointer hover:opacity-80 transition"
             onClick={() => navigate("/home")}
           />
-          <h1 className="text-xl font-normal text-slate-800">Explore</h1>
+          <h1 className="text-xl font-normal text-slate-800 hidden sm:block">Explore</h1>
         </div>
 
         <div className="flex-1 flex justify-center">
@@ -132,7 +132,7 @@ export default function Explore() {
         <>
           {/* CATEGORIES */}
           <div className="mt-6">
-            <button 
+            <button
               className="bg-blue-600 text-white px-4 py-1.5 rounded-md text-sm"
               onClick={() => setSelectedCategory(null)}
             >
@@ -144,11 +144,10 @@ export default function Explore() {
                 <button
                   key={c}
                   onClick={() => setSelectedCategory(c === selectedCategory ? null : c)}
-                  className={`py-1.5 px-3 border rounded-md text-xs transition hover:shadow-sm ${
-                    selectedCategory === c
+                  className={`py-1.5 px-3 border rounded-md text-xs transition hover:shadow-sm ${selectedCategory === c
                       ? "bg-blue-100 border-blue-500 text-blue-700"
                       : "border-slate-300 text-slate-700 bg-white"
-                  }`}
+                    }`}
                 >
                   {c}
                 </button>
