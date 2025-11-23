@@ -91,3 +91,23 @@ export const deletePost = async (postId) => {
         throw error;
     }
 };
+/**
+ * Gets posts created by a specific user.
+ * @param {string} userId - The ID of the user.
+ * @returns {Promise<Array>} - List of posts.
+ */
+export const getUserPosts = async (userId) => {
+    try {
+        const postsRef = collection(db, "posts");
+        const q = query(
+            postsRef,
+            where("creatorId", "==", userId),
+            orderBy("createdAt", "desc")
+        );
+        const snapshot = await getDocs(q);
+        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    } catch (error) {
+        console.error("Error fetching user posts:", error);
+        throw error;
+    }
+};

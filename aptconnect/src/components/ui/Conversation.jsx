@@ -150,7 +150,7 @@ const Conversation = ({ selectedChat, renderAvatar, isMobileView, onBack, curren
     setSending(true);
     setMessageText(""); // Optimistic clear
     try {
-      await sendMessage(selectedChat.id, currentUser.uid, textToSend);
+      await sendMessage(selectedChat.id, currentUser.uid, textToSend, null, null, currentUser);
     } catch (error) {
       console.error("Failed to send message", error);
       setMessageText(textToSend); // Restore on failure
