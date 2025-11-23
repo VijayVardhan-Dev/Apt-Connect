@@ -1,38 +1,28 @@
-import React from "react";
+import React from 'react';
 
-export default function FeatureSection({
-    title,
-    description,
-    image,
-    reversed = false,
-    bgColor = "bg-white"
-}) {
+export default function FeatureSection({ title, description, children, reversed = false }) {
     return (
-        <section className={`py-20 px-4 ${bgColor}`}>
-            <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-12 md:gap-20">
+        <div className="py-16 md:py-24">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className={`flex flex-col md:flex-row items-center gap-12 lg:gap-20 ${reversed ? 'md:flex-row-reverse' : ''}`}>
 
-                {/* Text Content */}
-                <div className={`flex-1 text-center md:text-left ${reversed ? 'md:order-2' : 'md:order-1'}`}>
-                    <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6 leading-tight">
-                        {title}
-                    </h2>
-                    <p className="text-lg text-slate-600 leading-relaxed">
-                        {description}
-                    </p>
-                </div>
-
-                {/* Image Content */}
-                <div className={`flex-1 ${reversed ? 'md:order-1' : 'md:order-2'}`}>
-                    <div className="relative rounded-2xl overflow-hidden shadow-2xl transform hover:scale-[1.02] transition duration-500">
-                        <img
-                            src={image}
-                            alt={title}
-                            className="w-full h-auto object-cover bg-slate-100"
-                        />
+                    {/* Text Content */}
+                    <div className="w-full md:w-1/2 space-y-6 text-center md:text-left">
+                        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight">
+                            {title}
+                        </h2>
+                        <p className="text-lg text-gray-600 leading-relaxed">
+                            {description}
+                        </p>
                     </div>
-                </div>
 
+                    {/* Image Content */}
+                    <div className="w-full md:w-1/2 px-6 md:px-0">
+                        {children}
+                    </div>
+
+                </div>
             </div>
-        </section>
+        </div>
     );
 }

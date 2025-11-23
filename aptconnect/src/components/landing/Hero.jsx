@@ -1,75 +1,112 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import connectImg from "../../assets/illustrations/connect.png";
-import activeIcon from "../../assets/icons/active_students_icon.png";
-import projectIcon from "../../assets/icons/projects_icon.png";
-import verifiedIcon from "../../assets/icons/verified_members_icon.png";
-import membersIcon from "../../assets/icons/members_icon.png";
+import React, { useState } from 'react';
+import { Menu, X, MousePointer2 } from 'lucide-react';
+import connectImg from '../../assets/illustrations/connect.png';
+import collaborateImg from '../../assets/illustrations/collobarate.png';
+import createImg from '../../assets/illustrations/create.png';
+import logo from '../../assets/logos/logo.png';
 
 export default function Hero() {
-    const navigate = useNavigate();
-
-    const stats = [
-        { icon: membersIcon, label: "500+ active learners" },
-        { icon: activeIcon, label: "50+ clubs formed" },
-        { icon: projectIcon, label: "120+ projects showcased" },
-        { icon: verifiedIcon, label: "100% verified members" },
-    ];
+    const [isOpen, setIsOpen] = useState(false);
 
     return (
-        <section className="relative pt-32 pb-20 px-4 overflow-hidden bg-slate-50">
-            <div className="max-w-6xl mx-auto text-center relative z-10">
-                <h1 className="text-4xl md:text-6xl font-bold text-slate-900 mb-6 leading-tight">
-                    Connect and grow with <br className="hidden md:block" />
-                    clubs at <span className="text-indigo-600">APT Kakinada.</span>
-                </h1>
+        <section className="relative pt-0 pb-12 overflow-hidden">
+            {/* Navbar integrated into Hero */}
+            <nav className="relative z-50 bg-transparent">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="flex justify-between h-20 items-center">
+                        <div className="flex-shrink-0 flex items-center gap-2">
+                            <img src={logo} alt="APT Connect" className="h-14 w-auto" />
+                        </div>
 
-                <p className="text-lg md:text-xl text-slate-600 mb-10 max-w-2xl mx-auto">
+                        <div className="hidden md:flex items-center space-x-4">
+                            <button className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors">Log in</button>
+                            <button className="bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm hover:shadow">
+                                Sign up
+                            </button>
+                        </div>
+
+                        <div className="md:hidden flex items-center">
+                            <button onClick={() => setIsOpen(!isOpen)} className="text-gray-600 hover:text-gray-900">
+                                {isOpen ? <X size={24} /> : <Menu size={24} />}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Mobile menu */}
+                {isOpen && (
+                    <div className="md:hidden bg-white border-b border-gray-100 absolute w-full top-full left-0 z-50 shadow-lg">
+                        <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                            <button className="block w-full text-left px-3 py-2 text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md">Log in</button>
+                            <button className="block w-full text-left px-3 py-2 text-base font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-md">Sign up</button>
+                        </div>
+                    </div>
+                )}
+            </nav>
+
+            {/* Grid Background Pattern */}
+            <div className="absolute inset-0 z-0 opacity-[0.03]"
+                style={{ backgroundImage: 'linear-gradient(#000 1px, transparent 1px), linear-gradient(90deg, #000 1px, transparent 1px)', backgroundSize: '40px 40px' }}>
+            </div>
+
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center pt-10">
+                <h1 className="text-4xl md:text-6xl font-extrabold text-gray-900 tracking-tight mb-6">
+                    Connect and grow with <br className="hidden md:block" />
+                    clubs at APT Kakinada.
+                </h1>
+                <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto mb-10">
                     Join clubs, collaborate on projects, and showcase your work — all in one place.
                 </p>
 
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-                    <button
-                        onClick={() => navigate('/register')}
-                        className="px-8 py-3 bg-indigo-600 text-white rounded-full font-semibold hover:bg-indigo-700 transition shadow-lg hover:shadow-indigo-200"
-                    >
-                        Join your college now
+                <div className="flex flex-col sm:flex-row justify-center gap-4 mb-16">
+                    <button className="bg-blue-600 text-white px-8 py-3 rounded-full font-medium hover:bg-blue-700 transition-all shadow-lg hover:shadow-blue-200">
+                        Get started - it's free
                     </button>
-                    <button
-                        onClick={() => navigate('/explore')}
-                        className="px-8 py-3 bg-white text-slate-700 border border-slate-200 rounded-full font-semibold hover:bg-slate-50 transition"
-                    >
+                    <button className="bg-white text-gray-700 border border-gray-200 px-8 py-3 rounded-full font-medium hover:bg-gray-50 transition-colors">
                         Explore clubs
                     </button>
                 </div>
 
-                {/* Hero Image */}
-                <div className="relative max-w-4xl mx-auto mb-20">
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-50 via-transparent to-transparent z-10 bottom-0 h-20" />
-                    <img
-                        src={connectImg}
-                        alt="Students connecting"
-                        className="w-full h-auto object-contain drop-shadow-xl"
-                    />
-                </div>
-
-                {/* Stats */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-8 border-t border-slate-200 pt-12">
-                    {stats.map((stat, idx) => (
-                        <div key={idx} className="flex flex-col items-center gap-2">
-                            <div className="w-10 h-10 bg-indigo-50 rounded-full flex items-center justify-center text-indigo-600 mb-2">
-                                <img src={stat.icon} alt="" className="w-5 h-5 object-contain" />
-                            </div>
-                            <span className="text-sm font-medium text-slate-900">{stat.label}</span>
+                <div className="max-w-6xl mx-auto mt-12 grid grid-cols-1 md:grid-cols-3 gap-8 items-end">
+                    {/* Connect */}
+                    <div className="relative group">
+                        <div className="h-64 w-full flex items-center justify-center relative">
+                            <img src={connectImg} alt="Connect" className="w-full h-full object-contain" />
                         </div>
-                    ))}
-                </div>
-            </div>
+                        <div className="absolute -top-6 left-1/2 -translate-x-1/2 flex items-center">
+                            <MousePointer2 className="w-5 h-5 text-gray-900 absolute -left-4 top-4 z-20 fill-black" />
+                            <div className="bg-[#FF9B9B] px-6 py-2 rounded-full shadow-sm text-sm font-medium text-white whitespace-nowrap z-10">
+                                connect
+                            </div>
+                        </div>
+                    </div>
 
-            {/* Background decoration */}
-            <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-0 pointer-events-none opacity-30">
-                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-100 rounded-full blur-3xl" />
-                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-100 rounded-full blur-3xl" />
+                    {/* Collaborate */}
+                    <div className="relative group">
+                        <div className="h-64 w-full flex items-center justify-center relative">
+                            <img src={collaborateImg} alt="Collaborate" className="w-full h-full object-contain" />
+                        </div>
+                        <div className="absolute -top-6 left-1/2 -translate-x-1/2 flex items-center">
+                            <MousePointer2 className="w-5 h-5 text-gray-900 absolute -left-4 top-4 z-20 fill-black" />
+                            <div className="bg-[#A78BFA] px-6 py-2 rounded-full shadow-sm text-sm font-medium text-white whitespace-nowrap z-10">
+                                collaborate
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Create */}
+                    <div className="relative group">
+                        <div className="h-64 w-full flex items-center justify-center relative">
+                            <img src={createImg} alt="Create" className="w-full h-full object-contain" />
+                        </div>
+                        <div className="absolute -top-6 left-1/2 -translate-x-1/2 flex items-center">
+                            <MousePointer2 className="w-5 h-5 text-gray-900 absolute -left-4 top-4 z-20 fill-black" />
+                            <div className="bg-[#F472B6] px-6 py-2 rounded-full shadow-sm text-sm font-medium text-white whitespace-nowrap z-10">
+                                create
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
     );

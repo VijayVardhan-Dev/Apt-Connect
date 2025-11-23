@@ -16,8 +16,7 @@ import CreateClub from "../pages/CreateClub/CreateClub";
 import NotFound from "../pages/NotFound";
 import ClubPage from "../pages/Clubpage/Clubpage";
 
-import Navbar from "../components/layout/Navbar";
-import Footer from "../components/layout/Footer";
+
 import DashboardLayout from "../components/layout/DashboardLayout";
 import PrivateRoute from "./PrivateRoute";
 import FeedbackPage from "../pages/Feedback/Feedback";
@@ -31,9 +30,9 @@ const AppRouter = () => {
           path="/"
           element={
             <>
-              <Navbar />
+            
               <Landing />
-              <Footer />
+            
             </>
           }
         />
