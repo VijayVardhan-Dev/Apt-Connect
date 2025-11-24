@@ -4,7 +4,7 @@ import Stats from "../../components/landing/Stats";
 import FeatureSection from "../../components/landing/FeatureSection";
 import Testimonials from "../../components/landing/Testimonials";
 import Footer from "../../components/landing/Footer";
-import { FeatureImagePlaceholder1, FeatureImagePlaceholder2, FeatureImagePlaceholder3 } from "../../components/landing/Placeholders";
+
 
 export default function Landing() {
   return (
@@ -18,7 +18,9 @@ export default function Landing() {
           title="Connect, collaborate, and chat instantly."
           description="Approach clubs in the public directory based on your interests and get real-time conversations going."
         >
-          <FeatureImagePlaceholder1 />
+          <div className="rounded-2xl overflow-hidden shadow-2xl border border-gray-100 bg-white">
+            <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&q=80&w=800" alt="Connect feature" className="w-full h-auto" />
+          </div>
         </FeatureSection>
 
         <FeatureSection
@@ -26,14 +28,18 @@ export default function Landing() {
           title="Build your next great project."
           description="Simple, always organized workspace for events, files, and more. Find team members easily."
         >
-          <FeatureImagePlaceholder2 />
+          <div className="rounded-2xl overflow-hidden shadow-2xl border border-gray-100 bg-white">
+            <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=800" alt="Collaborate feature" className="w-full h-auto" />
+          </div>
         </FeatureSection>
 
         <FeatureSection
           title="Build your public portfolio automatically."
           description="Showcase your work to the entire campus. Projects you work on build your resume automatically."
         >
-          <FeatureImagePlaceholder3 />
+          <div className="rounded-2xl overflow-hidden shadow-2xl border border-gray-100 bg-white">
+            <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&q=80&w=800" alt="Create feature" className="w-full h-auto" />
+          </div>
         </FeatureSection>
 
         <Testimonials />
