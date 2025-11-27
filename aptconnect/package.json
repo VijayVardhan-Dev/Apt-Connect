@@ -15,6 +15,7 @@
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "firebase": "^12.5.0",
+    "gsap": "^3.13.0",
     "lucide-react": "^0.554.0",
     "multer": "^2.0.2",
     "react": "^19.1.1",

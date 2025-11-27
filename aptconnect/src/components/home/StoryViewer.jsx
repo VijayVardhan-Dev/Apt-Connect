@@ -82,7 +82,7 @@ export default function StoryViewer({ stories, initialStoryIndex = 0, onClose })
     }, [currentIndex]);
 
     return (
-        <div className="fixed inset-0 z-50 bg-black flex items-center justify-center">
+        <div className="font-poppins fixed inset-0 z-50 bg-black flex items-center justify-center">
             {/* Close Button */}
             <button
                 onClick={onClose}
@@ -139,7 +139,7 @@ export default function StoryViewer({ stories, initialStoryIndex = 0, onClose })
 
                 {/* Caption */}
                 {currentStory.caption && (
-                    <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 to-transparent text-white text-center pb-12">
+                    <div className="absolute bottom-0 left-0 right-0 p-6 bg-linear-to-t from-black/80 to-transparent text-white text-center pb-12">
                         <p className="text-lg font-medium">{currentStory.caption}</p>
                     </div>
                 )}

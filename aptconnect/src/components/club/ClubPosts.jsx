@@ -12,7 +12,7 @@ const ClubPosts = ({
     onCreateClick
 }) => {
     return (
-        <div className="space-y-6">
+        <div className="font-poppins space-y-6">
             {/* Create Post Button (Members Only) */}
             {isMember && (
                 <div className="flex justify-end">

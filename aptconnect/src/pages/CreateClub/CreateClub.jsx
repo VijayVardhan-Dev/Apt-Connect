@@ -143,7 +143,7 @@ const CreateClub = () => {
 
         <div className="flex flex-col md:flex-row gap-8">
           {/* Left Column: Profile Pic */}
-          <div className="flex-shrink-0">
+          <div className="shrink-0">
             <label htmlFor="profilePic" className="cursor-pointer relative group flex flex-col items-center">
               {profilePic ? (
                 <img

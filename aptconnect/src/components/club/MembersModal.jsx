@@ -3,12 +3,12 @@
 import React, { useEffect, useState } from "react";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../lib/firebase";
-import { X, Loader2, User, MessageCircle } from "lucide-react";
+import { X, Loader2, User, MessageCircle, Crown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import { createOrGetDirectChat } from "../../lib/chatService";
 
-export default function MembersModal({ memberIds, onClose }) {
+export default function MembersModal({ memberIds, admins = [], onClose }) {
     const [members, setMembers] = useState([]);
     const [loading, setLoading] = useState(true);
     const { user: currentUser } = useAuth();
@@ -63,7 +63,7 @@ export default function MembersModal({ memberIds, onClose }) {
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+        <div className="font-poppins fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
             <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
                 {/* Header */}
                 <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
@@ -108,13 +108,16 @@ export default function MembersModal({ memberIds, onClose }) {
                                         </div>
                                         <div>
                                             <p
-                                                className="font-medium text-slate-900 cursor-pointer hover:text-indigo-600 transition"
+                                                className="font-medium text-slate-900 cursor-pointer hover:text-indigo-600 transition flex items-center gap-1"
                                                 onClick={() => {
                                                     onClose();
                                                     navigate(`/profile/${member.id}`);
                                                 }}
                                             >
                                                 {member.displayName || member.name || "Unknown User"}
+                                                {admins.includes(member.id) && (
+                                                    <Crown size={14} className="text-yellow-500 fill-yellow-500" />
+                                                )}
                                             </p>
                                             <p className="text-xs text-slate-500">{member.email}</p>
                                         </div>

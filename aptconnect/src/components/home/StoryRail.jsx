@@ -60,7 +60,7 @@ export default function StoryRail() {
     if (!user) return null;
 
     return (
-        <section className="flex justify-start py-4 overflow-x-auto scrollbar-hide px-4">
+        <section className="font-poppins flex justify-start py-4 overflow-x-auto scrollbar-hide px-4">
             <div className="flex gap-4 items-center">
 
                 {/* Add Story Button (Only if admin of at least one club) */}
@@ -98,7 +98,7 @@ export default function StoryRail() {
                             className="flex flex-col items-center gap-1 cursor-pointer shrink-0 group"
                             onClick={() => handleStoryClick(group)}
                         >
-                            <div className="w-[74px] h-[74px] rounded-full bg-gradient-to-tr from-yellow-400 to-fuchsia-600 p-[2px] hover:scale-105 transition-transform">
+                            <div className="w-[74px] h-[74px] rounded-full bg-linear-to-tr from-yellow-400 to-fuchsia-600 p-[2px] hover:scale-105 transition-transform">
                                 <div className="w-full h-full rounded-full border-2 border-white bg-white overflow-hidden">
                                     {group.clubLogo ? (
                                         <img src={group.clubLogo} alt={group.clubName} className="w-full h-full object-cover" />

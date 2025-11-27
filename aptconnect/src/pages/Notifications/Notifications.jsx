@@ -166,7 +166,7 @@ export default function NotificationsPage() {
                 >
                   {/* Icon Indicator */}
                   <div
-                    className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center mr-3 ${bg} ${color}`}
+                    className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center mr-3 ${bg} ${color}`}
                   >
                     <IconComponent size={18} />
                   </div>

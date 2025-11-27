@@ -6,8 +6,8 @@ import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../lib/firebase";
 
 // Default Icons (Fallbacks)
-import clubDp from "../../assets/images/club_dp.png";
-import postImg from "../../assets/images/post.png";
+import clubDp from "../../assets/images/club.png";
+import postImg from "../../assets/images/profile.jpg";
 import viewsIcon from "../../assets/icons/views_icon.png";
 import likeIcon from "../../assets/icons/like_icon.png";
 import saveIcon from "../../assets/icons/save_icon.png";

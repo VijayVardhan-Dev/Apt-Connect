@@ -54,7 +54,7 @@ const ShowcaseCard = ({ item, type = "post" }) => {
       />
 
       {/* Gradient Overlay - Minimal, only at bottom for text readability */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-90 transition-opacity duration-300" />
+      <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent opacity-90 transition-opacity duration-300" />
 
       {/* Content Container */}
       <div className="absolute inset-0 p-6 flex flex-col justify-between">

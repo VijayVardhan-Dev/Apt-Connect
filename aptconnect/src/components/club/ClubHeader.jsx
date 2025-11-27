@@ -8,7 +8,8 @@ const ClubHeader = ({
     joining,
     membersCount,
     onJoin,
-    onShowMembers
+    onShowMembers,
+    adminName
 }) => {
     const navigate = useNavigate();
 
@@ -26,7 +27,7 @@ const ClubHeader = ({
             </button>
 
             {/* Club header */}
-            <div className="flex items-center justify-between mb-10">
+            <div className="flex flex-col  md:flex-row items-start md:items-center font-poppins justify-between mb-10 gap-6 md:gap-0">
                 <div className="flex items-center gap-6">
                     <img
                         src={club.profileURL || "https://placehold.co/160x160/e2e8f0/334155?text=Club"}
@@ -40,11 +41,16 @@ const ClubHeader = ({
                         <p className="text-sm text-gray-500">
                             {club.tagline || "No tagline available"}
                         </p>
+                        {adminName && (
+                            <p className="text-xs text-gray-400 mt-1">
+                                Admin: <span className="font-medium text-gray-600">{adminName}</span>
+                            </p>
+                        )}
                     </div>
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex items-center gap-3">
+                <div className="flex items-center ml-24 font-poppins gap-3 w-full md:w-auto justify-start md:justify-end">
                     {/* Members Button */}
                     <button
                         onClick={onShowMembers}
@@ -71,7 +77,7 @@ const ClubHeader = ({
                             <Users className="w-5 h-5" />
                         )}
                         <span className="font-medium text-sm">{membersCount}</span>
-                        <span className="text-xs opacity-70 ml-1 hidden sm:inline">
+                        <span className="text-xs opacity-70 ml-1 sm:inline">
                             {isMember ? "Joined" : "Join"}
                         </span>
                     </button>
@@ -79,7 +85,7 @@ const ClubHeader = ({
             </div>
 
             {/* About Section */}
-            <div className="mb-10">
+            <div className="mb-10 font-poppins">
                 <h3 className="text-gray-700 font-medium mb-2">About</h3>
                 <p className="text-sm text-gray-500 leading-relaxed max-w-2xl">
                     {club.description || "No description provided yet."}

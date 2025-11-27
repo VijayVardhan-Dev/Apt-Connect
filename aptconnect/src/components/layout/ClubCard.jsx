@@ -10,7 +10,7 @@ const ClubCard = ({ club }) => {
       to={`/club/${club.id}`} 
       className="group block bg-white p-4 rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-lg transition-all duration-300"
     >
-      <div className="flex items-start justify-between gap-3">
+      <div className="font-poppins flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
           <h4 className="text-sm font-semibold text-gray-900 mb-1 truncate group-hover:text-gray-700 transition-colors">
             {club.name}
