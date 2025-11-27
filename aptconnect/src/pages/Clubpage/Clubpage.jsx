@@ -31,12 +31,13 @@ const ClubPage = () => {
   const { user } = useAuth();
 
   // --- 1. LOGIC & STATE ---
-  const [club, setClub] = useState(location.state?.club || null);
-  const [loading, setLoading] = useState(!location.state?.club);
+  const [club, setClub] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState("events");
   const [joining, setJoining] = useState(false);
   const [showMembers, setShowMembers] = useState(false);
+  const [adminName, setAdminName] = useState("");
 
   // Group Chat (Events) State
   const [clubChats, setClubChats] = useState([]);
@@ -71,13 +72,17 @@ const ClubPage = () => {
   useEffect(() => {
     let active = true;
     const fetchClub = async () => {
-      if (club) {
+      // If location state has club data and matches ID, use it
+      if (location.state?.club && location.state.club.id === clubId) {
+        setClub(location.state.club);
         setLoading(false);
         return;
       }
 
       setLoading(true);
       setError("");
+      setClub(null); // Reset club to ensure UI updates or shows loading
+
       try {
         const ref = doc(db, "clubs", clubId);
         const snap = await getDoc(ref);
@@ -99,7 +104,25 @@ const ClubPage = () => {
     return () => {
       active = false;
     };
-  }, [clubId, club]);
+  }, [clubId, location.state]);
+
+  // Fetch Admin Name
+  useEffect(() => {
+    const fetchAdminName = async () => {
+      if (club?.admins && club.admins.length > 0) {
+        try {
+          const adminDoc = await getDoc(doc(db, "users", club.admins[0]));
+          if (adminDoc.exists()) {
+            const data = adminDoc.data();
+            setAdminName(data.displayName || data.name || "Admin");
+          }
+        } catch (error) {
+          console.error("Failed to fetch admin name", error);
+        }
+      }
+    };
+    fetchAdminName();
+  }, [club]);
 
   // Fetch Club Chats (Events)
   useEffect(() => {
@@ -294,6 +317,7 @@ const ClubPage = () => {
           membersCount={membersCount}
           onJoin={handleMembershipToggle}
           onShowMembers={() => setShowMembers(true)}
+          adminName={adminName}
         />
 
         <ClubTabs
@@ -336,6 +360,7 @@ const ClubPage = () => {
       {showMembers && (
         <MembersModal
           memberIds={club.members}
+          admins={club.admins}
           onClose={() => setShowMembers(false)}
         />
       )}

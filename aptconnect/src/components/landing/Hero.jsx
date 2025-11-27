@@ -3,20 +3,22 @@ import { Menu, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import connectImg from '../../assets/illustrations/connect.png';
 import collaborateImg from '../../assets/illustrations/collobarate.png';
-import createImg from '../../assets/illustrations/create.png';
+import createImg from '../../assets/illustrations/create1.png';
 import logo from '../../assets/logos/logo.png';
+import paperTexture from '../../assets/images/papp.jpg';
 
 export default function Hero() {
     const [isOpen, setIsOpen] = useState(false);
     const navigate = useNavigate();
+    const navigate = useNavigate();
 
     return (
-        <section className="relative pt-0 pb-12 overflow-hidden">
+        <section className="relative pt-0 pb-12 font-poppins overflow-hidden">
             {/* Navbar integrated into Hero */}
             <nav className="relative z-50 bg-transparent">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-20 items-center">
-                        <div className="flex-shrink-0 flex items-center gap-2">
+                        <div className="shrink-0 flex items-center gap-2">
                             <img src={logo} alt="APT Connect" className="h-14 w-auto" />
                         </div>
 
@@ -69,13 +71,18 @@ export default function Hero() {
                 style={{ backgroundImage: 'linear-gradient(#000 1px, transparent 1px), linear-gradient(90deg, #000 1px, transparent 1px)', backgroundSize: '40px 40px' }}>
             </div>
 
+            {/* Paper Texture Overlay */}
+            <div className="absolute inset-0 z-0 opacity-40 mix-blend-multiply pointer-events-none"
+                style={{ backgroundImage: `url(${paperTexture})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover' }}>
+            </div>
+
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center pt-10">
                 <h1 className="text-4xl md:text-6xl font-extrabold text-gray-900 tracking-tight mb-6">
                     Connect and grow with <br className="hidden md:block" />
                     clubs at APT Kakinada.
                 </h1>
-                <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto mb-10">
-                    Join clubs, collaborate on projects, and showcase your work — all in one place.
+                <p className="text-lg md:text-xl text-gray-600 w-[70%] mx-auto mb-10">
+                    Join clubs, collaborate on projects, and showcase <br /> your work — all in one place.
                 </p>
 
                 <div className="flex flex-col sm:flex-row justify-center gap-4 mb-16">

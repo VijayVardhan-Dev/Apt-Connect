@@ -11,7 +11,7 @@ const ClubEvents = ({
     onCreateClick
 }) => {
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 font-poppins">
             {/* Admin Create Button */}
             {isAdmin && (
                 <div className="flex justify-end">

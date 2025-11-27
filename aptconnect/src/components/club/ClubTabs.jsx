@@ -3,7 +3,7 @@ import { PlusCircle, CalendarDays, Layers } from "lucide-react";
 
 const ClubTabs = ({ activeTab, setActiveTab }) => {
     return (
-        <div className="relative mb-8">
+        <div className="font-poppins relative mb-8">
             <div className="flex items-center justify-between border-b pb-3">
                 {/* Posts - Left */}
                 <div

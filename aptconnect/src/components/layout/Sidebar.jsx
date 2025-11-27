@@ -107,7 +107,7 @@ export default function Sidebar({ collapsed, bottomBar }) {
 
     return (
       <>
-        <nav className="fixed left-0 right-0 bottom-0 z-50" aria-label="Mobile bottom nav" style={{ WebkitBackdropFilter: "saturate(180%) blur(6px)" }}>
+        <nav className="fixed left-0 right-0 bottom-0 z-50 font-poppins" aria-label="Mobile bottom nav" style={{ WebkitBackdropFilter: "saturate(180%) blur(6px)" }}>
           <div className="bg-white border-t border-slate-200 shadow-sm">
             <div className="max-w-4xl mx-auto relative">
               <div className="absolute left-0 bottom-0 h-0.5 bg-transparent w-full" aria-hidden="true">
@@ -166,7 +166,7 @@ export default function Sidebar({ collapsed, bottomBar }) {
     <>
       <aside
         className={clsx(
-          "fixed top-0 left-0 border-r border-slate-300 h-screen bg-white flex flex-col z-50 transition-[width] duration-300 ease-in-out overflow-visible",
+          "fixed top-0 left-0 border-r border-slate-300 h-screen bg-white flex flex-col z-50 transition-[width] duration-300 ease-in-out overflow-visible font-poppins",
           asideWidthClass
         )}
         onClick={(e) => e.stopPropagation()}
@@ -178,7 +178,7 @@ export default function Sidebar({ collapsed, bottomBar }) {
           isSidebarSmall ? "justify-center px-2" : "justify-between px-4"
         )}>
           <div>
-            {!isSidebarSmall && <img src={logoIcon} alt="logo" className="object-contain w-28 h-8" onError={(e) => imgOnError(e, "AC")} />}
+            {!isSidebarSmall && <img src={logoIcon} alt="logo" className="object-contain h-12" onError={(e) => imgOnError(e, "AC")} />}
           </div>
           <div className={clsx("flex items-center", isSidebarSmall ? "justify-center w-full" : "")}>
             {isSidebarSmall ? (

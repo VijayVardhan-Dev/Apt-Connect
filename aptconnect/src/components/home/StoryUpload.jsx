@@ -34,7 +34,7 @@ export default function StoryUpload({ clubs, onClose, onUploadSuccess, currentUs
     };
 
     return (
-        <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
+        <div className="font-poppins fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
             <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
                 <div className="p-4 border-b border-gray-100 flex justify-between items-center">
                     <h3 className="font-bold text-lg text-gray-900">Add to Story</h3>

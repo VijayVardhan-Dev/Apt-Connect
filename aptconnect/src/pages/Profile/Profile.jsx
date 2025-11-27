@@ -376,7 +376,7 @@ const ProfilePage = () => {
         {/* Header Section (Minimalist) */}
         <div className="flex flex-col md:flex-row gap-8 items-start mb-12">
           {/* Avatar (Large Rounded Square) */}
-          <div className="w-32 h-32 md:w-40 md:h-40 rounded-[2rem] overflow-hidden bg-gray-100 shrink-0 shadow-sm">
+          <div className="w-32 h-32 md:w-40 md:h-40 rounded-4xl overflow-hidden bg-gray-100 shrink-0 shadow-sm">
             <img
               src={userData?.photoURL || `https://placehold.co/200x200/e2e8f0/475569?text=${userData?.name?.charAt(0)}`}
               alt={userData?.name}
@@ -483,7 +483,7 @@ const ProfilePage = () => {
               <div className="flex flex-col sm:flex-row gap-6 items-center sm:items-start">
                 {/* Photo */}
                 <div className="flex flex-col items-center gap-3 shrink-0">
-                  <div className="w-24 h-24 rounded-[2rem] bg-gray-100 overflow-hidden relative group cursor-pointer border border-gray-200">
+                  <div className="w-24 h-24 rounded-4xl bg-gray-100 overflow-hidden relative group cursor-pointer border border-gray-200">
                     <img
                       src={previewPic || userData?.photoURL || "https://placehold.co/100x100"}
                       alt="Preview"

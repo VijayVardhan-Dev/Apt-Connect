@@ -70,7 +70,7 @@ const CreatePostModal = ({ onClose, onPostCreated, clubId, currentUser }) => {
 
     return createPortal(
         <div
-            className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/30 transition-opacity"
+            className="font-poppins fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/30 transition-opacity"
             onClick={onClose}
         >
             {/* Modal Content Box */}

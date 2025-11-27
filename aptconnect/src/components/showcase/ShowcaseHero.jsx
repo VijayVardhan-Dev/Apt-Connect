@@ -49,7 +49,7 @@ const ShowcaseHero = ({ items = [] }) => {
                 className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-in-out transform scale-105 group-hover:scale-110"
                 style={{ backgroundImage: `url(${image})` }}
             >
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/40 to-transparent" />
             </div>
 
             {/* Content */}

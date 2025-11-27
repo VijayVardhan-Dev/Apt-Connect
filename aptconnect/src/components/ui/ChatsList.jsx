@@ -80,8 +80,9 @@ const ChatsList = ({
       <div className="flex-1 overflow-y-auto p-2 space-y-1 scrollbar-hide pb-16 sm:pb-0">
         {filteredChats.length > 0 ? (
           filteredChats.map((chat) => {
+            const isGroup = chat.type === "group";
             const otherUser = chat.otherUser;
-            const name = otherUser?.displayName || otherUser?.name || chat.name || "User";
+            const name = isGroup ? (chat.name || "Group Chat") : (otherUser?.displayName || otherUser?.name || chat.name || "User");
             const lastMsgText = chat.lastMessage?.text || "No messages yet";
             const time = formatTime(chat.lastMessage?.timestamp || chat.updatedAt);
             const isSelected = selectedChat?.id === chat.id;
