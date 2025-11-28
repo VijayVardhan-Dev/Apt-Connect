@@ -10,6 +10,10 @@ import StoryRail from "../../components/home/StoryRail";
 import { getAllPosts } from "../../lib/postService";
 import useAuth from "../../hooks/useAuth";
 
+// Assets
+import logoIcon from "../../assets/logos/logo.png";
+import notifyIcon from "../../assets/icons/Notification.png";
+
 // Helper for conditional class names
 const clsx = (...classes) => classes.filter(Boolean).join(' ');
 
@@ -45,6 +49,17 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-white text-slate-900 relative">
+
+      {/* ===== Mobile Header (Visible only on small screens) ===== */}
+      <header className="md:hidden sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-200 px-4 h-16 flex items-center justify-between">
+        <img src={logoIcon} alt="AptConnect" className="h-8 object-contain" />
+        <button
+          onClick={() => navigate("/notifications")}
+          className="p-2 -mr-2 hover:bg-slate-100 rounded-full transition"
+        >
+          <img src={notifyIcon} alt="Notifications" className="w-6 h-6 object-contain" />
+        </button>
+      </header>
 
       {/* ===== Centered content column (Feed) ===== */}
       <main className="max-w-3xl mx-auto px-4 py-6 space-y-8">

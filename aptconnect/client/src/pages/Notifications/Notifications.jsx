@@ -84,7 +84,7 @@ export default function NotificationsPage() {
         {/* Header */}
         <div className="flex items-center justify-between mb-8 border-b border-gray-100 pb-4">
           <div className="flex items-center gap-3">
-            <button onClick={() => navigate(-1)} className="p-1 hover:bg-gray-100 rounded-full transition">
+            <button onClick={() => navigate("/home")} className="p-1 hover:bg-gray-100 rounded-full transition">
               <ArrowLeft size={20} />
             </button>
             <h2 className="text-2xl font-bold">Notifications</h2>

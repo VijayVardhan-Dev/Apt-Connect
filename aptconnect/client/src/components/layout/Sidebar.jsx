@@ -17,6 +17,10 @@ import { EXPLORE_LINKS, UTILITY_LINKS } from "../../constants/navigation";
 import logoIcon from "../../assets/logos/logo.png";
 import logo2Icon from "../../assets/icons/logo.png";
 import clubIcon from "../../assets/icons/members_icon.png";
+import feedbackIcon from "../../assets/icons/feedback_icon.png";
+import helpIcon from "../../assets/icons/help_icon.png";
+import profileIcon from "../../assets/icons/profile_icon.png";
+import profileSidebarIcon from "../../assets/icons/profile_sidebar.png";
 
 // Helper for conditional class names
 const clsx = (...classes) => classes.filter(Boolean).join(' ');
@@ -99,9 +103,21 @@ export default function Sidebar({ collapsed, bottomBar }) {
 
   // Mobile Bottom Bar Render
   if (bottomBar) {
-    const bottomItems = EXPLORE_LINKS.slice(0, 5);
+    // Filter out Notifications and add Profile
+    const bottomItems = [
+      ...EXPLORE_LINKS.filter(link => link.label !== "Notifications"),
+      {
+        label: "Profile",
+        to: `/profile/${user?.uid || ""}`,
+        icon: user?.photoURL || profileSidebarIcon,
+        isProfile: true
+      }
+    ];
     const itemCount = bottomItems.length;
-    const activeIndex = Math.max(0, bottomItems.findIndex((it) => it.to === location.pathname));
+    const activeIndex = Math.max(0, bottomItems.findIndex((it) => {
+      if (it.label === "Profile") return location.pathname.startsWith("/profile");
+      return it.to === location.pathname;
+    }));
     const indicatorWidth = `${100 / itemCount}%`;
     const indicatorTransform = `translateX(${activeIndex * 100}%)`;
 
@@ -137,18 +153,37 @@ export default function Sidebar({ collapsed, bottomBar }) {
                         )
                       }
                     >
-                      <img
-                        src={item.icon}
-                        alt={item.label}
-                        className={clsx(
-                          "w-5 h-5 object-contain transition-transform duration-150",
-                          location.pathname === item.to ? "scale-105" : ""
-                        )}
-                        onError={(e) => {
-                          e.target.onerror = null;
-                          e.target.src = "https://placehold.co/28x28";
-                        }}
-                      />
+                      {({ isActive }) => (
+                        <div className="relative flex items-center justify-center">
+                          {item.isProfile ? (
+                            <img
+                              src={item.icon}
+                              alt={item.label}
+                              className={clsx(
+                                "w-6 h-6 rounded-full object-cover  transition-all",
+                              
+                              )}
+                              onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = profileSidebarIcon;
+                              }}
+                            />
+                          ) : (
+                            <img
+                              src={item.icon}
+                              alt={item.label}
+                              className={clsx(
+                                "w-5 h-5 object-contain transition-transform duration-150",
+                                isActive ? "scale-105" : ""
+                              )}
+                              onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = "https://placehold.co/28x28";
+                              }}
+                            />
+                          )}
+                        </div>
+                      )}
                     </NavLink>
                   </li>
                 ))}

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { ArrowLeft, ChevronDown, X } from "lucide-react";
 
 const SECTIONS = [
@@ -53,6 +54,7 @@ const SECTIONS = [
 ];
 
 export default function SettingsPage() {
+  const navigate = useNavigate();
   const [openIndex, setOpenIndex] = useState(null);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -75,16 +77,22 @@ export default function SettingsPage() {
 
   return (
     <div className="min-h-screen bg-white py-8 text-slate-800">
-      
+
       {/* 💡 MODIFIED CONTAINER: Removed mx-auto. Uses max-w-3xl for readable width 
           and relies on the parent Dashboard Layout (which offsets the sidebar)
           to position this content correctly on the left. */}
-      <div className="w-full max-auto max-w-7xl px-4 sm:px-6 lg:px-8"> 
-        
+      <div className="w-full max-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+
         {/* Header */}
         <div className="flex items-center mb-8">
-          <ArrowLeft className="w-6 h-6 cursor-pointer text-slate-800 hover:text-indigo-600 transition" />
-          <h2 className="text-xl font-medium ml-4">Settings</h2> 
+          <button
+            onClick={() => navigate(-1)}
+            className="p-2 -ml-2 mr-2 rounded-full hover:bg-slate-100 transition"
+            aria-label="Go back"
+          >
+            <ArrowLeft className="w-6 h-6 text-slate-800" />
+          </button>
+          <h2 className="text-xl font-medium">Settings</h2>
         </div>
 
         {/* ===== Main Content Block (Left-aligned, max-width 3xl) ===== */}
@@ -119,19 +127,17 @@ export default function SettingsPage() {
                 >
                   <span className="text-[15px] font-medium text-slate-800">{sec.title}</span>
                   <ChevronDown
-                    className={`w-4 h-4 text-slate-800 transform transition-transform duration-200 ${
-                      isOpen ? "rotate-180" : "rotate-0"
-                    }`}
+                    className={`w-4 h-4 text-slate-800 transform transition-transform duration-200 ${isOpen ? "rotate-180" : "rotate-0"
+                      }`}
                   />
                 </button>
 
                 <div
                   id={`section-content-${i}`}
-                  className={`overflow-hidden transition-all duration-300 ${
-                    isOpen ? "max-h-80 py-3" : "max-h-0"
-                  }`}
+                  className={`overflow-hidden transition-all duration-300 ${isOpen ? "max-h-80 py-3" : "max-h-0"
+                    }`}
                 >
-                  <div className="text-sm text-slate-800 pl-4">{sec.content}</div> 
+                  <div className="text-sm text-slate-800 pl-4">{sec.content}</div>
                 </div>
               </div>
             );

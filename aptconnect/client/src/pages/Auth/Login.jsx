@@ -1,6 +1,7 @@
 // src/pages/Auth/Login.jsx
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Loader2 } from "lucide-react";
 import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { auth, db } from "../../lib/firebase";
 import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
@@ -45,20 +46,29 @@ export default function Login() {
         setError(err.message || "Failed to sign in.");
       }
     } finally {
-      setLoading(false);
+      setEmailLoading(false); // Use emailLoading
     }
   };
 
   const handleBack = () => {
-    navigate(-1);
+    navigate("/");
   };
 
   const handleGoogle = async () => {
     setError("");
-    setLoading(true);
+    setGoogleLoading(true); // Use googleLoading
     const provider = new GoogleAuthProvider();
     try {
-      const result = await signInWithPopup(auth, provider);
+      // 60s timeout for Google Sign-In
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("Request timed out")), 30000)
+      );
+
+      const result = await Promise.race([
+        signInWithPopup(auth, provider),
+        timeoutPromise
+      ]);
+
       const fbUser = result.user;
       if (!fbUser) throw new Error("No user returned from Google.");
 
@@ -81,9 +91,15 @@ export default function Login() {
       navigate(from, { replace: true });
     } catch (err) {
       console.error("Google sign-in error:", err);
-      setError(err?.message || "Failed to sign in with Google.");
+      if (err.code === "auth/popup-closed-by-user") {
+        setError("Sign-in cancelled.");
+        // Clear error after 3 seconds
+        setTimeout(() => setError(""), 3000);
+      } else {
+        setError(err?.message || "Failed to sign in with Google.");
+      }
     } finally {
-      setLoading(false);
+      setGoogleLoading(false); // Use googleLoading
     }
   };
 
@@ -148,10 +164,10 @@ export default function Login() {
               <button
                 type="submit"
                 aria-label="Login"
-                disabled={loading}
+                disabled={emailLoading || googleLoading} // Disable if either is loading
                 className="w-full h-11 flex items-center justify-center bg-slate-800 text-white rounded-full font-semibold hover:bg-slate-700 active:scale-95 transition disabled:bg-slate-500 disabled:cursor-not-allowed"
               >
-                {loading ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div> : "Login"}
+                {emailLoading ? <Loader2 className="w-5 h-5 animate-spin text-white" /> : "Login"}
               </button>
             </div>
 
@@ -169,7 +185,7 @@ export default function Login() {
                 disabled={loading}
                 className="w-full h-11 flex items-center justify-center bg-white border border-neutral-200 text-sm font-semibold rounded-full hover:bg-neutral-50 active:scale-95 transition disabled:bg-slate-200 disabled:cursor-not-allowed"
               >
-                {loading ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-slate-800"></div> : "Login with Google"}
+                {loading ? <Loader2 className="w-5 h-5 animate-spin text-slate-800" /> : "Login with Google"}
               </button>
             </div>
 

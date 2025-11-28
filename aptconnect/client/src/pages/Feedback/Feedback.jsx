@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import { Star, ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Star, ArrowRight, ArrowLeft } from "lucide-react";
 
 export default function FeedbackPage() {
+  const navigate = useNavigate();
   const [rating, setRating] = useState(0);
   const [category, setCategory] = useState("");
   const [comments, setComments] = useState("");
@@ -24,9 +26,19 @@ export default function FeedbackPage() {
   return (
     <div className="min-h-screen bg-white text-gray-900 font-sans">
       <div className="max-w-2xl mx-auto px-6 pt-12">
-        
+
+        {/* Minimal Header */}
         {/* Minimal Header */}
         <header className="mb-12">
+          <div className="flex items-center gap-4 mb-4">
+            <button
+              onClick={() => navigate(-1)}
+              className="p-2 -ml-2 rounded-full hover:bg-gray-100 transition"
+              aria-label="Go back"
+            >
+              <ArrowLeft size={24} className="text-black" />
+            </button>
+          </div>
           <h1 className="text-2xl font-semibold tracking-tight text-black">
             Feedback
           </h1>
@@ -41,7 +53,7 @@ export default function FeedbackPage() {
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-10">
-            
+
             {/* Rating Section */}
             <div className="space-y-3">
               <label className="block text-xs font-bold uppercase tracking-widest text-gray-400">
@@ -58,11 +70,10 @@ export default function FeedbackPage() {
                     <Star
                       size={24}
                       strokeWidth={1.5}
-                      className={`transition-all duration-200 ${
-                        starIndex <= rating
-                          ? "fill-black text-black"
-                          : "fill-transparent text-gray-300 group-hover:text-gray-500"
-                      }`}
+                      className={`transition-all duration-200 ${starIndex <= rating
+                        ? "fill-black text-black"
+                        : "fill-transparent text-gray-300 group-hover:text-gray-500"
+                        }`}
                     />
                   </button>
                 ))}
@@ -74,8 +85,8 @@ export default function FeedbackPage() {
 
             {/* Category Section */}
             <div className="space-y-3">
-              <label 
-                htmlFor="category" 
+              <label
+                htmlFor="category"
                 className="block text-xs font-bold uppercase tracking-widest text-gray-400"
               >
                 Category
@@ -96,15 +107,15 @@ export default function FeedbackPage() {
                 </select>
                 {/* Custom arrow for consistent minimal look */}
                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
-                   <span className="text-xs">▼</span>
+                  <span className="text-xs">▼</span>
                 </div>
               </div>
             </div>
 
             {/* Comments Section */}
             <div className="space-y-3">
-              <label 
-                htmlFor="comments" 
+              <label
+                htmlFor="comments"
                 className="block text-xs font-bold uppercase tracking-widest text-gray-400"
               >
                 Comments
@@ -126,10 +137,9 @@ export default function FeedbackPage() {
                 disabled={rating === 0 || comments.trim() === ""}
                 className={`
                   flex items-center gap-2 px-6 py-3 text-sm font-medium transition-all duration-200
-                  ${
-                    rating > 0 && comments.trim() !== ""
-                      ? "bg-black text-white hover:bg-gray-800"
-                      : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                  ${rating > 0 && comments.trim() !== ""
+                    ? "bg-black text-white hover:bg-gray-800"
+                    : "bg-gray-100 text-gray-400 cursor-not-allowed"
                   }
                 `}
               >

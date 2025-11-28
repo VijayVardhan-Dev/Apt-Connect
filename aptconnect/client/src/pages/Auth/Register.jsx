@@ -1,6 +1,7 @@
 // src/pages/Auth/Register.jsx
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Loader2 } from "lucide-react";
 import { createUserWithEmailAndPassword, updateProfile, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
 import { auth, db } from "../../lib/firebase";
@@ -53,10 +54,19 @@ export default function Register() {
 
   const handleGoogle = async () => {
     setError("");
-    setLoading(true);
+    setGoogleLoading(true);
     const provider = new GoogleAuthProvider();
     try {
-      const result = await signInWithPopup(auth, provider);
+      // 60s timeout for Google Sign-In
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("Request timed out")), 60000)
+      );
+
+      const result = await Promise.race([
+        signInWithPopup(auth, provider),
+        timeoutPromise
+      ]);
+
       const fbUser = result.user;
       if (!fbUser) throw new Error("Google did not return a user.");
 
@@ -78,9 +88,14 @@ export default function Register() {
       navigate("/home", { replace: true });
     } catch (err) {
       console.error("Google sign-up error:", err);
-      setError(err?.message || "Failed to sign up with Google.");
+      if (err.code === "auth/popup-closed-by-user") {
+        setError("Sign-up cancelled.");
+        setTimeout(() => setError(""), 3000);
+      } else {
+        setError(err?.message || "Failed to sign up with Google.");
+      }
     } finally {
-      setLoading(false);
+      setGoogleLoading(false);
     }
   };
 
@@ -94,7 +109,7 @@ export default function Register() {
         <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center bg-white overflow-y-auto">
           <form onSubmit={handleSignUp} className="max-w-[550px] w-full mx-auto space-y-4">
             <div className="mb-6 flex items-center gap-4">
-              <button type="button" aria-label="Back" onClick={() => window.history.back()} className="p-1 rounded-md hover:bg-gray-100 transition">
+              <button type="button" aria-label="Back" onClick={() => navigate("/")} className="p-1 rounded-md hover:bg-gray-100 transition">
                 <img src={arrowIcon} alt="back" className="w-6 h-6" />
               </button>
               <h1 className="text-2xl font-semibold text-slate-900">Sign Up</h1>
@@ -123,8 +138,8 @@ export default function Register() {
             {error && <p className="text-sm text-red-600 mt-1">{error}</p>}
 
             <div className="pt-2">
-              <button type="submit" disabled={loading} className="w-full h-11 flex items-center justify-center bg-slate-800 text-white rounded-full font-semibold hover:bg-slate-700 active:scale-95 transition disabled:bg-slate-500">
-                {loading ? "Please wait..." : "Sign Up"}
+              <button type="submit" disabled={loading || googleLoading} className="w-full h-11 flex items-center justify-center bg-slate-800 text-white rounded-full font-semibold hover:bg-slate-700 active:scale-95 transition disabled:bg-slate-500">
+                {loading ? <Loader2 className="w-5 h-5 animate-spin text-white" /> : "Sign Up"}
               </button>
             </div>
 
@@ -135,8 +150,8 @@ export default function Register() {
             </div>
 
             <div>
-              <button type="button" onClick={handleGoogle} disabled={loading} className="w-full h-11 flex items-center justify-center bg-white border border-neutral-200 text-sm font-semibold rounded-full hover:bg-neutral-50 active:scale-95 transition disabled:bg-slate-200">
-                Sign up with Google
+              <button type="button" onClick={handleGoogle} disabled={loading || googleLoading} className="w-full h-11 flex items-center justify-center bg-white border border-neutral-200 text-sm font-semibold rounded-full hover:bg-neutral-50 active:scale-95 transition disabled:bg-slate-200">
+                {googleLoading ? <Loader2 className="w-5 h-5 animate-spin text-gray-600" /> : "Sign up with Google"}
               </button>
             </div>
 
@@ -149,3 +164,4 @@ export default function Register() {
     </div>
   );
 }
+

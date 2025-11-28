@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { ChevronDown, Code, User } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { ChevronDown, Code, User, ArrowLeft } from "lucide-react";
 
 // FAQ Data structure (Unchanged)
 const FAQ_SECTIONS = [
@@ -42,6 +43,7 @@ const FAQ_SECTIONS = [
 ];
 
 export default function HelpPage() {
+  const navigate = useNavigate();
   const [openSection, setOpenSection] = useState(null);
 
   const toggleSection = (id) => {
@@ -51,9 +53,18 @@ export default function HelpPage() {
   return (
     <div className="min-h-screen bg-white text-gray-900 font-sans">
       <div className="max-w-2xl mx-auto px-6 pt-12">
-        
+
         {/* Minimal Header */}
         <header className="mb-12">
+          <div className="flex items-center gap-4 mb-4">
+            <button
+              onClick={() => navigate(-1)}
+              className="p-2 -ml-2 rounded-full hover:bg-gray-100 transition"
+              aria-label="Go back"
+            >
+              <ArrowLeft size={24} className="text-black" />
+            </button>
+          </div>
           <h1 className="text-2xl font-semibold tracking-tight text-black">
             Help Center
           </h1>
@@ -66,7 +77,7 @@ export default function HelpPage() {
         <div className="space-y-12">
           {FAQ_SECTIONS.map((section, sectionIndex) => (
             <div key={section.category}>
-              
+
               {/* Section Title - Minimal & Uppercase */}
               <div className="flex items-center gap-2 mb-4 border-b border-gray-100 pb-2">
                 <section.icon size={16} className="text-gray-400" />
@@ -97,18 +108,16 @@ export default function HelpPage() {
                         <span className="ml-4 mt-1">
                           <ChevronDown
                             size={14}
-                            className={`text-gray-400 transition-transform duration-300 ${
-                              isOpen ? "rotate-180 text-black" : ""
-                            }`}
+                            className={`text-gray-400 transition-transform duration-300 ${isOpen ? "rotate-180 text-black" : ""
+                              }`}
                           />
                         </span>
                       </button>
 
                       {/* Answer Dropdown */}
                       <div
-                        className={`overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1.0)] ${
-                          isOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
-                        }`}
+                        className={`overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1.0)] ${isOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
+                          }`}
                       >
                         <p className="pb-6 text-sm leading-relaxed text-gray-500 max-w-prose">
                           {item.a}

@@ -13,8 +13,13 @@ import {
   Hash,
   Globe,
   Plus,
-  Users
+  Users,
+  Settings,
+  MessageSquare,
+  HelpCircle,
+  LogOut
 } from "lucide-react";
+import profileIcon from "../../assets/icons/profile_icon.png";
 import { doc, getDoc, setDoc, collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "../../lib/firebase";
 import useAuth from "../../hooks/useAuth";
@@ -26,7 +31,7 @@ const clsx = (...classes) => classes.filter(Boolean).join(" ");
 const TABS = ["Clubs", "About", "Skills"];
 
 const ProfilePage = () => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
   const { userId } = useParams();
   const isOwnProfile = !userId || userId === user?.uid;
@@ -378,7 +383,7 @@ const ProfilePage = () => {
           {/* Avatar (Large Rounded Square) */}
           <div className="w-32 h-32 md:w-40 md:h-40 rounded-4xl overflow-hidden bg-gray-100 shrink-0 shadow-sm">
             <img
-              src={userData?.photoURL || `https://placehold.co/200x200/e2e8f0/475569?text=${userData?.name?.charAt(0)}`}
+              src={userData?.photoURL || profileIcon}
               alt={userData?.name}
               className="w-full h-full object-cover"
             />
@@ -466,6 +471,63 @@ const ProfilePage = () => {
         </div>
 
       </div>
+
+      {/* ===== Mobile Menu Options (Visible only on small screens) ===== */}
+      {isOwnProfile && (
+        <div className="md:hidden px-4 pb-8 space-y-2 mt-8 border-t border-gray-100 pt-8">
+          <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4 px-2">Account & Support</h4>
+
+          <button
+            onClick={() => navigate("/create-club")}
+            className="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-gray-50 transition text-left"
+          >
+            <div className="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600">
+              <Plus size={20} />
+            </div>
+            <span className="font-medium text-gray-900">Create Club</span>
+          </button>
+
+          <button
+            onClick={() => navigate("/settings")}
+            className="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-gray-50 transition text-left"
+          >
+            <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600">
+              <Settings size={20} />
+            </div>
+            <span className="font-medium text-gray-900">Settings</span>
+          </button>
+
+          <button
+            onClick={() => navigate("/feedback")}
+            className="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-gray-50 transition text-left"
+          >
+            <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600">
+              <MessageSquare size={20} />
+            </div>
+            <span className="font-medium text-gray-900">Feedback</span>
+          </button>
+
+          <button
+            onClick={() => navigate("/help")}
+            className="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-gray-50 transition text-left"
+          >
+            <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600">
+              <HelpCircle size={20} />
+            </div>
+            <span className="font-medium text-gray-900">Help & Support</span>
+          </button>
+
+          <button
+            onClick={logout}
+            className="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-red-50 transition text-left group"
+          >
+            <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-red-600 group-hover:bg-red-200 transition">
+              <LogOut size={20} />
+            </div>
+            <span className="font-medium text-red-600">Logout</span>
+          </button>
+        </div>
+      )}
 
       {/* Edit Modal */}
       {isEditing && (

@@ -298,7 +298,7 @@ const ClubPage = () => {
     return (
       <div className="flex flex-col items-center justify-center h-screen w-full bg-white gap-4">
         <p className="text-gray-500">{error || "Club not found"}</p>
-        <button onClick={() => navigate(-1)} className="text-blue-600 hover:underline">
+        <button onClick={() => navigate("/explore")} className="text-blue-600 hover:underline">
           Go Back
         </button>
       </div>

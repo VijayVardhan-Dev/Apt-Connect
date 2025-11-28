@@ -19,7 +19,7 @@ const ClubHeader = ({
         <>
             {/* Back Arrow */}
             <button
-                onClick={() => navigate(-1)}
+                onClick={() => navigate("/explore")}
                 className="p-2 rounded-full hover:bg-gray-100 transition mb-4"
                 title="Go back"
             >

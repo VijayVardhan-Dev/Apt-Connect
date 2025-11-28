@@ -1,5 +1,6 @@
 // src/pages/MembersList.jsx
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const members = [
   { id: 1, name: "classical", role: "Role", avatar: "src/assets/images/dp.png" },
@@ -37,6 +38,7 @@ function MemberRow({ member }) {
 }
 
 export default function MembersList() {
+  const navigate = useNavigate();
   return (
     <div className="max-w-[1300px] mx-auto bg-white min-h-screen">
       {/* Header */}
@@ -46,7 +48,7 @@ export default function MembersList() {
           type="button"
           className="p-1 rounded-full hover:bg-slate-100"
           aria-label="Go back"
-          onClick={() => window.history.back()}
+          onClick={() => navigate("/chat")}
         >
           <svg
             className="w-4 h-4 text-slate-700"
