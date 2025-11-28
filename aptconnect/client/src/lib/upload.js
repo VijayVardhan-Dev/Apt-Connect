@@ -5,7 +5,8 @@ export const uploadToCloudinary = async (file) => {
   const form = new FormData();
   form.append("file", file);
 
-  const res = await fetch("http://localhost:8000/upload", {
+  const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:8000";
+  const res = await fetch(`${backendUrl}/upload`, {
     method: "POST",
     body: form
   });
@@ -23,7 +24,7 @@ export const saveMetadata = async (imageUrl) => {
   if (!auth.currentUser) {
     throw new Error("User not authenticated");
   }
-  
+
   await addDoc(collection(db, "media"), {
     userId: auth.currentUser.uid,
     url: imageUrl,
