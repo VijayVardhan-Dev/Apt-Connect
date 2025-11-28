@@ -50,7 +50,7 @@ const ClubHeader = ({
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex items-center ml-24 font-poppins gap-3 w-full md:w-auto justify-start md:justify-end">
+                <div className="flex items-center ml-0 md:ml-24 font-poppins gap-3 w-full md:w-auto justify-start md:justify-end">
                     {/* Members Button */}
                     <button
                         onClick={onShowMembers}

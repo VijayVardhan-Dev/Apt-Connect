@@ -308,7 +308,7 @@ const ClubPage = () => {
   // --- 3. UI ---
   return (
     <div className="flex bg-white min-h-screen w-full relative">
-      <div className="flex-1 px-12 py-6">
+      <div className="flex-1 px-4 md:px-12 py-4 md:py-6">
 
         <ClubHeader
           club={club}
