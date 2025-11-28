@@ -14,6 +14,7 @@ export default function Register() {
   const [form, setForm] = useState({ name: "", email: "", password: "", confirmPassword: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
 
   const handleChange = (e) => setForm((s) => ({ ...s, [e.target.name]: e.target.value }));
 
@@ -138,7 +139,7 @@ export default function Register() {
             {error && <p className="text-sm text-red-600 mt-1">{error}</p>}
 
             <div className="pt-2">
-              <button type="submit" disabled={loading || googleLoading} className="w-full h-11 flex items-center justify-center bg-slate-800 text-white rounded-full font-semibold hover:bg-slate-700 active:scale-95 transition disabled:bg-slate-500">
+              <button type="submit" disabled={loading || googleLoading} className="w-full h-11 flex items-center justify-center bg-slate-800 text-white rounded-full font-semibold hover:bg-slate-700 active:scale-95 transition disabled:bg-slate-500 disabled:cursor-not-allowed">
                 {loading ? <Loader2 className="w-5 h-5 animate-spin text-white" /> : "Sign Up"}
               </button>
             </div>

@@ -18,7 +18,8 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [emailLoading, setEmailLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
 
   // Redirect if already logged in
   useEffect(() => {
@@ -31,7 +32,7 @@ export default function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
-    setLoading(true);
+    setEmailLoading(true);
     try {
       await signInWithEmailAndPassword(auth, email.trim(), password);
       navigate(from, { replace: true });
@@ -182,10 +183,10 @@ export default function Login() {
                 type="button"
                 onClick={handleGoogle}
                 aria-label="Login with Google"
-                disabled={loading}
+                disabled={googleLoading}
                 className="w-full h-11 flex items-center justify-center bg-white border border-neutral-200 text-sm font-semibold rounded-full hover:bg-neutral-50 active:scale-95 transition disabled:bg-slate-200 disabled:cursor-not-allowed"
               >
-                {loading ? <Loader2 className="w-5 h-5 animate-spin text-slate-800" /> : "Login with Google"}
+                {googleLoading ? <Loader2 className="w-5 h-5 animate-spin text-slate-800" /> : "Login with Google"}
               </button>
             </div>
 
